@@ -51,17 +51,5 @@
             <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
             <point key="canvasLocation" x="385.5" y="5.5"/>
         </view>
-        <viewController id="lgc-qp-TIt">
-            <layoutGuides>
-                <viewControllerLayoutGuide type="top" id="NIW-9i-49J"/>
-                <viewControllerLayoutGuide type="bottom" id="QyD-JO-ZJl"/>
-            </layoutGuides>
-            <view key="view" contentMode="scaleToFill" id="S3j-hH-jKg">
-                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
-                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-            </view>
-            <point key="canvasLocation" x="547" y="177"/>
-        </viewController>
     </objects>
 </document>

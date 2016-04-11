@@ -20,7 +20,13 @@
 		1F6D8D001C3B6FD200496AF1 /* no_image.9.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F6D8CFF1C3B6FD200496AF1 /* no_image.9.png */; };
 		1F6D8D021C3B707D00496AF1 /* ab_nav_bg.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F6D8D011C3B707D00496AF1 /* ab_nav_bg.png */; };
 		1F78343D1C2923D300DDD1B5 /* BianjiTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F78343B1C2923D300DDD1B5 /* BianjiTableViewCell.m */; };
+		1F8D55811CB756AE00D6F704 /* SimpleBarChart.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F8D55801CB756AE00D6F704 /* SimpleBarChart.m */; };
+		1F8D558C1CB776C700D6F704 /* ShenPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F8D558A1CB776C700D6F704 /* ShenPI.m */; };
 		1F8E86FA1C586FE400A60D68 /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F8E86F91C586FE400A60D68 /* Photos.framework */; };
+		1FA0E46E1CB5F5B1004149F4 /* XYPieChart.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA0E46D1CB5F5B1004149F4 /* XYPieChart.m */; };
+		1FA0E4721CB60C54004149F4 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA0E4701CB60C54004149F4 /* ViewController.m */; };
+		1FA0E4731CB60C54004149F4 /* ViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1FA0E4711CB60C54004149F4 /* ViewController.xib */; };
+		1FA8B9581CB8E1D80073C52E /* ShenpiTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA8B9571CB8E1D80073C52E /* ShenpiTableViewCell.m */; };
 		1FB11E331C32AD69009D1F5F /* Bianjito.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FB11E311C32AD69009D1F5F /* Bianjito.m */; };
 		1FB11E341C32AD69009D1F5F /* Bianjito.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1FB11E321C32AD69009D1F5F /* Bianjito.xib */; };
 		1FB6E4FD1C7D53D900D9F641 /* CalculatorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FB6E4FC1C7D53D900D9F641 /* CalculatorViewController.m */; };
@@ -153,7 +159,18 @@
 		1F6D8D011C3B707D00496AF1 /* ab_nav_bg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ab_nav_bg.png; sourceTree = "<group>"; };
 		1F78343A1C2923D300DDD1B5 /* BianjiTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BianjiTableViewCell.h; sourceTree = "<group>"; };
 		1F78343B1C2923D300DDD1B5 /* BianjiTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BianjiTableViewCell.m; sourceTree = "<group>"; };
+		1F8D557F1CB756AE00D6F704 /* SimpleBarChart.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleBarChart.h; sourceTree = "<group>"; };
+		1F8D55801CB756AE00D6F704 /* SimpleBarChart.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SimpleBarChart.m; sourceTree = "<group>"; };
+		1F8D55891CB776C700D6F704 /* ShenPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShenPI.h; sourceTree = "<group>"; };
+		1F8D558A1CB776C700D6F704 /* ShenPI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShenPI.m; sourceTree = "<group>"; };
 		1F8E86F91C586FE400A60D68 /* Photos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Photos.framework; path = System/Library/Frameworks/Photos.framework; sourceTree = SDKROOT; };
+		1FA0E46C1CB5F5B1004149F4 /* XYPieChart.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XYPieChart.h; sourceTree = "<group>"; };
+		1FA0E46D1CB5F5B1004149F4 /* XYPieChart.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XYPieChart.m; sourceTree = "<group>"; };
+		1FA0E46F1CB60C54004149F4 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		1FA0E4701CB60C54004149F4 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		1FA0E4711CB60C54004149F4 /* ViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ViewController.xib; sourceTree = "<group>"; };
+		1FA8B9561CB8E1D80073C52E /* ShenpiTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShenpiTableViewCell.h; sourceTree = "<group>"; };
+		1FA8B9571CB8E1D80073C52E /* ShenpiTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShenpiTableViewCell.m; sourceTree = "<group>"; };
 		1FB11E301C32AD69009D1F5F /* Bianjito.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Bianjito.h; sourceTree = "<group>"; };
 		1FB11E311C32AD69009D1F5F /* Bianjito.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Bianjito.m; sourceTree = "<group>"; };
 		1FB11E321C32AD69009D1F5F /* Bianjito.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Bianjito.xib; sourceTree = "<group>"; };
@@ -353,6 +370,36 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1F8D557E1CB756AE00D6F704 /* SimpleBarChart */ = {
+			isa = PBXGroup;
+			children = (
+				1F8D557F1CB756AE00D6F704 /* SimpleBarChart.h */,
+				1F8D55801CB756AE00D6F704 /* SimpleBarChart.m */,
+			);
+			path = SimpleBarChart;
+			sourceTree = "<group>";
+		};
+		1FA0E46A1CB5F583004149F4 /* Library */ = {
+			isa = PBXGroup;
+			children = (
+				1F8D557E1CB756AE00D6F704 /* SimpleBarChart */,
+				1FA0E46B1CB5F5B1004149F4 /* XYPieChart */,
+				1FA0E4701CB60C54004149F4 /* ViewController.m */,
+				1FA0E46F1CB60C54004149F4 /* ViewController.h */,
+				1FA0E4711CB60C54004149F4 /* ViewController.xib */,
+			);
+			name = Library;
+			sourceTree = "<group>";
+		};
+		1FA0E46B1CB5F5B1004149F4 /* XYPieChart */ = {
+			isa = PBXGroup;
+			children = (
+				1FA0E46C1CB5F5B1004149F4 /* XYPieChart.h */,
+				1FA0E46D1CB5F5B1004149F4 /* XYPieChart.m */,
+			);
+			path = XYPieChart;
+			sourceTree = "<group>";
+		};
 		1FB6E4FA1C7D53B600D9F641 /* Calculator */ = {
 			isa = PBXGroup;
 			children = (
@@ -550,6 +597,7 @@
 				4E00767D1AEA07920092CAB7 /* gonggao */,
 				6A94AF571BFCC82C00967DCC /* StatementViewController.h */,
 				6A94AF581BFCC82C00967DCC /* StatementViewController.m */,
+				1FA0E46A1CB5F583004149F4 /* Library */,
 			);
 			name = VC;
 			sourceTree = "<group>";
@@ -561,6 +609,8 @@
 				4E411E911B01D8D400BE43B0 /* StayDetail.h */,
 				4E411E921B01D8D400BE43B0 /* StayDetail.m */,
 				4E3436D81AEE075F00E45C55 /* StayApprovalViewCell.m */,
+				1FA8B9561CB8E1D80073C52E /* ShenpiTableViewCell.h */,
+				1FA8B9571CB8E1D80073C52E /* ShenpiTableViewCell.m */,
 			);
 			name = cell;
 			sourceTree = "<group>";
@@ -592,6 +642,8 @@
 				4E3436D61AEE074300E45C55 /* cell */,
 				4EA5C4171AEDD99100D2EB32 /* StayApprovalViewController.m */,
 				4EA5C4161AEDD99100D2EB32 /* StayApprovalViewController.h */,
+				1F8D55891CB776C700D6F704 /* ShenPI.h */,
+				1F8D558A1CB776C700D6F704 /* ShenPI.m */,
 			);
 			name = shenpi;
 			sourceTree = "<group>";
@@ -974,6 +1026,7 @@
 				4EB23B921B5C9D2B001DD240 /* Icon-60@3x.png in Resources */,
 				840475621C48D13400046F23 /* accountPassword.plist in Resources */,
 				4EB5C2881B4A5D220056D310 /* search_bg_blank@2x.png in Resources */,
+				1FA0E4731CB60C54004149F4 /* ViewController.xib in Resources */,
 				6A4B6E9B1C07521400663B7E /* ChangePasswordViewController.xib in Resources */,
 				4EB23B981B5CA2FA001DD240 /* lauch-480@2x.png in Resources */,
 				1F6D8D021C3B707D00496AF1 /* ab_nav_bg.png in Resources */,
@@ -1065,6 +1118,7 @@
 				4ED449461AEA403B0047614F /* LinkViewController.m in Sources */,
 				4E1DCC241B259F920023F337 /* CoreDataManager.m in Sources */,
 				6A94AF591BFCC82C00967DCC /* StatementViewController.m in Sources */,
+				1F8D55811CB756AE00D6F704 /* SimpleBarChart.m in Sources */,
 				4E35D6FB1B2151CA00A77624 /* HistoryModel.m in Sources */,
 				1FB11E331C32AD69009D1F5F /* Bianjito.m in Sources */,
 				4EE2D0501B43DBC70081C120 /* SDBrowserImageView.m in Sources */,
@@ -1079,6 +1133,7 @@
 				4ED537D71B4D02AF00A0FF9F /* NewsDetailViewController.m in Sources */,
 				6A4B6E9A1C07521400663B7E /* ChangePasswordViewController.m in Sources */,
 				4ED4493E1AEA390A0047614F /* WebViewController.m in Sources */,
+				1FA0E46E1CB5F5B1004149F4 /* XYPieChart.m in Sources */,
 				4E2626511B170A4100993493 /* UnApprovalModel.m in Sources */,
 				4E1E0E471B57939D00B0875B /* DocumentsFlowchartCell.m in Sources */,
 				4EEDA5721B140C9900BAD188 /* LogineViewController.m in Sources */,
@@ -1106,12 +1161,15 @@
 				4EC772C01B315D460060E709 /* KindsPickerView.m in Sources */,
 				4ED449381AEA32160047614F /* PFAdView.m in Sources */,
 				6A4B6E951C074F0300663B7E /* AboutViewController.m in Sources */,
+				1FA0E4721CB60C54004149F4 /* ViewController.m in Sources */,
+				1F8D558C1CB776C700D6F704 /* ShenPI.m in Sources */,
 				1FC06BCE1C4DD4EA0076B4AB /* MiXimodel.m in Sources */,
 				4E1DB0EE1B253D9500333940 /* BillsLayoutViewCell.m in Sources */,
 				1FCA1AB91C7564E900B92A25 /* Disembark.m in Sources */,
 				4E35D6F71B21491400A77624 /* HistoryViewCell.m in Sources */,
 				4ED98A5B1B2AB5330016CBD5 /* YPCGViewController.m in Sources */,
 				4ED449371AEA32160047614F /* PFAd.m in Sources */,
+				1FA8B9581CB8E1D80073C52E /* ShenpiTableViewCell.m in Sources */,
 				6A3371191C0058D800A5B0D5 /* UIImage+SKPImage.m in Sources */,
 				4EEDA5771B14198F00BAD188 /* DataManager.m in Sources */,
 				842114201C4300710076C467 /* applyChangeModel.m in Sources */,
@@ -1207,7 +1265,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PROVISIONING_PROFILE = "1d96f27a-a7c7-483e-80e4-3fa2f55fb8b9";
+				PROVISIONING_PROFILE = "bac39b4a-1613-45db-92e7-023ade96acdc";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -1223,12 +1281,12 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "Thinkape-iOS/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = cn.com.thinkape;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "1d96f27a-a7c7-483e-80e4-3fa2f55fb8b9";
+				PROVISIONING_PROFILE = "";
 				VALID_ARCHS = "armv7 armv7s arm64";
 			};
 			name = asdsda;
@@ -1282,7 +1340,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PROVISIONING_PROFILE = "1d96f27a-a7c7-483e-80e4-3fa2f55fb8b9";
+				PROVISIONING_PROFILE = "bac39b4a-1613-45db-92e7-023ade96acdc";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -1298,7 +1356,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "Thinkape-iOS/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = cn.com.thinkape;
@@ -1364,7 +1422,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PROVISIONING_PROFILE = "1d96f27a-a7c7-483e-80e4-3fa2f55fb8b9";
+				PROVISIONING_PROFILE = "bac39b4a-1613-45db-92e7-023ade96acdc";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -1400,7 +1458,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PROVISIONING_PROFILE = "1d96f27a-a7c7-483e-80e4-3fa2f55fb8b9";
+				PROVISIONING_PROFILE = "bac39b4a-1613-45db-92e7-023ade96acdc";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -1416,7 +1474,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "Thinkape-iOS/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = cn.com.thinkape;
@@ -1436,7 +1494,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "Thinkape-iOS/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = cn.com.thinkape;

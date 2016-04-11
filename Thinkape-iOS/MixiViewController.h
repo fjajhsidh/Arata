@@ -7,8 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-
-@interface MixiViewController : UIViewController
+#import "ParentsViewController.h"
+@interface MixiViewController :ParentsViewController
 @property(nonatomic,assign)long index;
 @property(nonatomic,strong)NSMutableArray *costatrraylost;
 @property(nonatomic,strong)NSMutableArray *costarrdate;

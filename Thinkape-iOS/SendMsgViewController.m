@@ -8,8 +8,9 @@
 
 #import "SendMsgViewController.h"
 #import "IQKeyboardManager.h"
-
-@interface SendMsgViewController ()<UITextFieldDelegate>
+#import "NewsListViewController.h"
+#import "ShenPI.h"
+@interface SendMsgViewController ()<UITextFieldDelegate,UITextViewDelegate>
 {
     BOOL _wasKeyboardManagerEnabled;
 }
@@ -55,7 +56,21 @@
     
     // Do any additional setup after loading the view.
 }
-
+-(void)pulltoreturn
+{
+    
+    
+    
+    [self.msgText resignFirstResponder];
+    
+    NSArray *temArray =self.navigationController.viewControllers;
+    for (UIViewController *ter in temArray) {
+        if ([ter isKindOfClass:[NewsListViewController class]]) {
+            [self.navigationController popToViewController:ter animated:YES];
+        }
+    }
+    
+}
 - (void)keyBoardShow:(NSNotification *)noti{
     NSDictionary *userinfo = noti.userInfo;
     NSValue *aValue = [userinfo objectForKey:@"UIKeyboardFrameEndUserInfoKey"];

@@ -75,6 +75,7 @@
 @property(nonatomic,strong)NSMutableDictionary *dictArray;
 @property(nonatomic,strong)CostLayoutModel *coster;
 @property(nonatomic,strong)NSMutableString *valueStr;
+
 @end
 
 @implementation BianJiViewController
@@ -94,14 +95,7 @@
     CGFloat distances;
     BOOL _wasKeyboardManagerEnabled;
 }
--(void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-    _wasKeyboardManagerEnabled = [[IQKeyboardManager sharedManager] isEnabled];
-    [[IQKeyboardManager sharedManager] setEnable:NO];
-    
-    
-}
+
 
 
 - (id)initWithCoder:(NSCoder *)aDecoder{
@@ -112,9 +106,19 @@
     }
     return self;
 }
+//键盘弹出第三方
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    _wasKeyboardManagerEnabled = [[IQKeyboardManager sharedManager] isEnabled];
+    [[IQKeyboardManager sharedManager] setEnable:NO];
+}
 
-
-
+-(void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    [[IQKeyboardManager sharedManager] setEnable:_wasKeyboardManagerEnabled];
+}
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
@@ -180,43 +184,56 @@
     }
     
     [self requestDataSource];
+    textFiledHeight=0;
     
     [self addFooterView];
-
+    
     self.dictarry =[NSMutableDictionary dictionary];
      //保存删除字表id
     self.deledict =[NSMutableDictionary dictionary];
   //键盘的弹出和隐藏
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardShows:) name:UIKeyboardWillShowNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardHidens:) name:UIKeyboardWillHideNotification object:nil];
-
-   
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardShows:) name:UIKeyboardWillChangeFrameNotification object:nil];
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardHidens:) name:UIKeyboardWillHideNotification object:nil];
     
-}
-- (IBAction)textKeyboard:(id)sender {
-    
-//    [self.textfield resignFirstResponder];
+    self.view.backgroundColor =[UIColor clearColor];
+    self.view.window.backgroundColor =[UIColor clearColor];
     
     
 }
+//键盘弹出
 - (void)keyboardShows:(NSNotification *)notification{
-    NSDictionary *keyBoardInfo = [notification userInfo];
-    NSValue *aValue = [keyBoardInfo objectForKey:@"UIKeyboardFrameEndUserInfoKey"];
-    CGRect rect = [aValue CGRectValue];
-    CGFloat keyBoard_Y = rect.origin.y;
-    if (Textfield_y > keyBoard_Y && Textfield_y!= 0) {
-        distances =Textfield_y - keyBoard_Y + 100;
-        self.view.frame = CGRectMake(0, -distances, self.view.frame.size.width, self.view.frame.size.height);
+
+    
+    self.view.window.backgroundColor = self.tableview.backgroundColor;
+        // 0.取出键盘动画的时间
+    CGFloat duration = [notification.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+    
+    // 1.取得键盘最后的frame
+    CGRect keyboardFrame = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
+    
+    // 2.计算控制器的view需要平移的距离
+    CGFloat transformY = keyboardFrame.origin.y-(self.tableview.frame.size.height-infoView.frame.size.height-30);
+    //不能超过键盘的高度
+    if (transformY >-200) {
+        transformY=-200;
+        
     }
+    
+    // 3.执行动画
+    [UIView animateWithDuration:duration animations:^{
+        self.view.transform = CGAffineTransformMakeTranslation(0, transformY);
+        //self.tableview.transform= self.view.transform;
+    }];
 }
 - (void)keyboardHidens:(NSNotification *)notification{
     Textfield_y= 0;
-    self.view.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
+    
+  self.view.frame = CGRectMake(0, 0, self.tableview.frame.size.width, self.tableview.frame.size.height);
 }
-
+//返回隐藏键盘
 -(void)pulltoreturn
 {
- 
+    [self.textfield resignFirstResponder];
     NSArray *temArray =self.navigationController.viewControllers;
     for (UIViewController *ter in temArray) {
         if ([ter isKindOfClass:[BillsListViewController class]]) {
@@ -509,6 +526,7 @@
         else{
             row = count / 3 + 1;
         }
+        
         return (speace + imageWidth) * row + 90;
     }
     else if (indexPath.row == _mainLayoutArray.count + 1 && _uploadArr.count == 0 && [self isUnCommint]){
@@ -516,7 +534,7 @@
         CGFloat speace = 15.0f;
         CGFloat imageWidth = (SCREEN_WIDTH - 36 -4*speace) / 3.0f;
         int row = count / 3 + 1;
-        return (speace + imageWidth) * row + 10;
+        return (speace + imageWidth) * row + 50;
     }
     
     else if (indexPath.row < _mainLayoutArray.count){
@@ -593,13 +611,13 @@
    
     
     
-    
+    self.textfield=textField;
    
     self.textfield.tag=textField.tag;
     LayoutModel *model = [self.mainLayoutArray safeObjectAtIndex:textField.tag];
     
     NSLog(@"tag值：%ld",textField.tag);
-    
+  
    
     
     NSIndexPath *path =[self.tableview indexPathForSelectedRow];
@@ -640,6 +658,8 @@
 - (BOOL)textFieldShouldReturn:(UITextField *)textField{
     
     [textField resignFirstResponder];
+   
+
     return YES;
 }
 
@@ -660,7 +680,8 @@
 
 
 //wo
--(void)textFieldDidEndEditing:(UITextField *)textField{
+-(BOOL)textFieldShouldEndEditing:(UITextField *)textField{
+   
     LayoutModel *model = [self.mainLayoutArray safeObjectAtIndex:textField.tag];
     
     if (![self isPureInt:textField.text] && [model.sqldatatype isEqualToString:@"number"] && textField.text.length != 0) {
@@ -686,7 +707,8 @@
     
     [self.XMLParameterDic setObject:textField.text forKey:model.fieldname];
     [self.tableViewDic setObject:textField.text forKey:model.fieldname];
-    
+     self.view.frame = CGRectMake(0, 0, self.tableview.frame.size.width, self.tableview.frame.size.height);
+       return YES;
     
 }
 
@@ -1290,7 +1312,7 @@
 -(void)costDetails:(UIButton *)btn
 {
    
-   
+    [self.textfield resignFirstResponder];
     Bianjito *vc = [[Bianjito alloc] init];
     AppDelegate *app = (AppDelegate *)[UIApplication sharedApplication].delegate;
     //cell的行数

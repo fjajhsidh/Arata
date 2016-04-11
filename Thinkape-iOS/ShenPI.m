@@ -1,12 +1,12 @@
 //
-//  BillsDetailViewController.m
+//  ShenPI.m
 //  Thinkape-iOS
 //
-//  Created by tixa on 15/5/5.
-//  Copyright (c) 2015年 TIXA. All rights reserved.
+//  Created by admin on 16/4/8.
+//  Copyright © 2016年 TIXA. All rights reserved.
 //
 
-#import "BillsDetailViewController.h"
+#import "ShenPI.h"
 #import "LayoutModel.h"
 #import "CostLayoutModel.h"
 #import "BillsDetailViewCell.h"
@@ -27,30 +27,35 @@
 #import "applyChangeModel.h"
 #import <Photos/Photos.h>
 #import "AppDelegate.h"
-
+#import "ShenpiTableViewCell.h"
 #import "ViewController.h"
-@interface BillsDetailViewController ()<SDPhotoBrowserDelegate,QLPreviewControllerDataSource,UIAlertViewDelegate,UINavigationControllerDelegate, UIImagePickerControllerDelegate,CTAssetsPickerControllerDelegate,UIActionSheetDelegate>{
-    NSString *delteImageID;
+
+@interface ShenPI ()<SDPhotoBrowserDelegate,QLPreviewControllerDataSource,UIAlertViewDelegate,UINavigationControllerDelegate, UIImagePickerControllerDelegate,CTAssetsPickerControllerDelegate,UIActionSheetDelegate,XYPieChartDelegate,XYPieChartDataSource,SimpleBarChartDataSource, SimpleBarChartDelegate>
+{
+     NSString *delteImageID;
+     UIScrollView *view;
 }
-@property (weak, nonatomic) IBOutlet UIView *lineView;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *lineLeftConstraint;
 @property (weak, nonatomic) IBOutlet UIView *topView;
+@property (weak, nonatomic) IBOutlet UIView *lineView;
+
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *lineLeftConstraint;
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *topConstaraint;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *tableViewBottomConstraint;
+@property (weak, nonatomic) IBOutlet UIView *HideView;
+
 @property (strong,nonatomic) NSMutableArray *mainLayoutArray; // 主表 布局视图
 @property (strong,nonatomic) NSMutableArray *costLayoutArray; // 花费 布局视图
 @property (strong,nonatomic) NSMutableArray *pathFlow; // 审批流程
 @property (nonatomic,strong) NSMutableArray *mainData;
 @property (nonatomic,strong) NSMutableArray *costData;
 @property (nonatomic,strong) NSMutableArray *uploadArr;
-@property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (assign, nonatomic) NSUInteger selectedIndex; // 0:单据详情 1:审批追溯 2:审批流程 default :0
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *topConstaraint;
-@property (nonatomic,strong) UITextField *beizhuText;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *tableViewBottomConstraint;
 @property (nonatomic , strong) NSMutableArray *imageArray;
 @property(nonatomic,strong)UIActionSheet *actionsheet;
 
-
 //wo
+
 @property(strong,nonatomic)NSDictionary * changedict;
 @property(strong,nonatomic)NSMutableArray * changeArr;
 @property(strong,nonatomic)applyChangeModel * changeModel;
@@ -58,21 +63,23 @@
 @property(weak,nonatomic)NSString * tuiHuiStr;
 @property(nonatomic)BOOL tuihui;
 @property(nonatomic,strong)NSString * leixing;
-//承载饼图
-@property(nonatomic,strong)UIScrollView *crilceScrol;
-//饼图
-//@property(nonatomic,strong)XYPieChart *crileView;
-//几块饼
-@property(nonatomic,strong)NSMutableArray *Crilearry;
-//每一块的颜色
-@property(nonatomic,strong)NSArray *crilecolour;
-@property(nonatomic,strong)UIView *Crilece;
-@property(nonatomic,strong)UIViewController *currentview;
-@property(nonatomic,strong)BillsDetailViewController *bill;
+@property (nonatomic,strong) UITextField *beizhuText;
 @property(nonatomic,strong)ViewController *views;
+@property(nonatomic,strong)NSMutableArray *Criclearray;
+@property(nonatomic,strong)NSArray *Criclecolour;
+//预算统计视图
+@property(nonatomic,strong)UIView *contentCz;
+//饼图
+@property(nonatomic,strong)XYPieChart *MaRu;
+//柱状图
+@property(nonatomic,strong)SimpleBarChart *chart;
+@property(nonatomic,strong)NSArray *values;
+@property(nonatomic,strong)NSArray *haikei;
+@property(nonatomic,assign)NSInteger currentbar;
+@property(nonatomic,strong)NSMutableArray *twoCsarry;
 @end
 
-@implementation BillsDetailViewController
+@implementation ShenPI
 {
     UIView * bgView;
     CGFloat textFiledHeight;
@@ -81,7 +88,6 @@
     UIView *infoView;
     CGFloat lastConstant; // 记录最后一次tableView 与底部的距离
 }
-
 - (instancetype)initWithCoder:(NSCoder *)aDecoder{
     self = [super initWithCoder:aDecoder];
     if (self) {
@@ -133,94 +139,79 @@
     self.views.view.hidden=YES;
     
     [self addChildViewController:self.views];
-    self.bill =[[BillsDetailViewController alloc] init];
-    [self addChildViewController:_bill];
-    self.currentview = self.bill;
+    self.contentCz =[[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
+    self.contentCz.backgroundColor =[UIColor whiteColor];
+//    [self.view addSubview:self.contentCz];
+    self.contentCz.hidden=YES;
+    view =[[UIScrollView alloc] initWithFrame:CGRectMake(0, self.contentCz.frame.origin.y,SCREEN_WIDTH, SCREEN_HEIGHT)];
     
-//    self.crileView.delegate=self;
-//    self.crileView.dataSource=self;
+    view.contentSize = CGSizeMake(view.frame.size.width, 1500);
+    
+    view.bounces=YES;
+    //饼图的个数
+    _Criclearray =[NSMutableArray arrayWithCapacity:10];
+    
+    for (int i=0; i< 2; i++) {
+        NSNumber *number = [NSNumber numberWithInt:rand()%60+20];
+        [_Criclearray addObject:number];
+        
+    }
   
-   
+        [self MaruGodo];
+
+    //柱状图的个数
+    _twoCsarry = [NSMutableArray arrayWithCapacity:3];
+    for (int i=0; i<2; i++) {
+        NSNumber *numer =[NSNumber numberWithInt:rand()%60+20];
+        [_twoCsarry addObject:numer];
+        
+    }
+    
+    [self Histogram];
+        // Do any additional setup after loading the view.
 }
-//-(void)showCrile
-//{
-//    _Crilece  = [[UIView alloc] initWithFrame:CGRectMake(0, 100,self.view.frame.size.width, self.view.frame.size.height)];
-//    _Crilece.backgroundColor =[UIColor whiteColor];
-//    
-//    NSLog(@"————————-----图像的长度%f",_Crilece.frame.size.width);
-//    NSLog(@"————————-----图像的高度%f",_Crilece.frame.size.height);
-//    //几块饼
-//    self.Crilearry =[NSMutableArray arrayWithCapacity:10];
-//    for (int i=0; i<2; i++) {
-//        NSNumber *number = [NSNumber numberWithInt:rand()%60+20];
-//        [self.Crilearry addObject:number];
-//    }
-//    //承载
-////    self.crilceScrol = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 100,SCREEN_WIDTH, SCREEN_HEIGHT)];
-////    self.crilceScrol.contentSize = CGSizeMake(SCREEN_WIDTH, 700);
-//    //饼图
-//   
-//    
-// 
-//    self.crileView.startPieAngle = M_PI_2;
-//    self.crileView.backgroundColor =[UIColor blackColor];
-//    self.crileView.pieCenter = CGPointMake(_Crilece.center.x, 120);
-//    self.crileView.showPercentage = NO;
-//   
-//    self.crileView.animationSpeed=1.0;
-//    self.crileView.layer.cornerRadius = 90;
-//    self.crilecolour = [NSArray arrayWithObjects:
-//                        [UIColor colorWithRed:246/255.0 green:155/255.0 blue:0/255.0 alpha:1],
-//                        [UIColor colorWithRed:129/255.0 green:195/255.0 blue:29/255.0 alpha:1],nil];
-//    
-//
-//   
-////    [self.view addSubview:_Crilece];
-//    //self.crilceScrol.hidden=YES;
-//}
-//-(NSUInteger)numberOfSlicesInPieChart:(XYPieChart *)pieChart
-//{
-//    return self.Crilearry.count;
-//    
-//}
-//-(CGFloat)pieChart:(XYPieChart *)pieChart valueForSliceAtIndex:(NSUInteger)index
-//{
-//    return [[self.Crilearry objectAtIndex:index] intValue];
-//}
-//-(UIColor *)pieChart:(XYPieChart *)pieChart colorForSliceAtIndex:(NSUInteger)index
-//{
-//    if (pieChart ==self.crileView) return nil;
-//    return [self.crilecolour objectAtIndex:(index%self.crilecolour.count)];
-//    
-//    
-//}
-//-(void)pieChart:(XYPieChart *)pieChart didSelectSliceAtIndex:(NSUInteger)index
-//{
-//    NSLog(@"afgghjh,l;");
-//    
-//}
-//-(void)pieChart:(XYPieChart *)pieChart willSelectSliceAtIndex:(NSUInteger)index
-//{
-//    
-//}
-//-(void)pieChart:(XYPieChart *)pieChart willDeselectSliceAtIndex:(NSUInteger)index
-//{
-//    
-//}
-//
+-(void)Histogram
+{
+    self.values = @[@30, @45, @44, @60, @95, @2, @8, @9];
+    self.haikei = [NSMutableArray arrayWithCapacity:0];
+    self.haikei = @[[UIColor blueColor], [UIColor redColor], [UIColor blackColor], [UIColor orangeColor], [UIColor purpleColor], [UIColor greenColor]];
+    self.currentbar = 0;
+    CGRect chartFrame				= CGRectMake(10,
+                                                view.frame.size.height-350,320.0,300.0);
+    self.chart = [[SimpleBarChart alloc] initWithFrame:chartFrame];
+    // self.chart.center = CGPointMake(view.frame.size.width / 2.0, self.);
+    
+    
+    self.chart.dataSource=self;
+    self.chart.delegate=self;
+    self.chart.barShadowOffset = CGSizeMake(2.0, 1.0);
+    self.chart.animationDuration =1.0;
+    self.chart.barShadowColor = [UIColor blueColor];
+    self.chart.barShadowAlpha = 0.5;
+    self.chart.barShadowRadius = 1.0;
+    self.chart.barWidth= 18.0;
+    self.chart.xLabelType = SimpleBarChartXLabelTypeVerticle;
+    self.chart.incrementValue=10;
+    self.chart.barTextType = SimpleBarChartBarTextTypeTop;
+    self.chart.barTextColor = [UIColor whiteColor];
+    self.chart.gridColor = [UIColor grayColor];
+    [view addSubview:self.chart];
+    
+    
+}
 //wo添加申请转报销，申请转借款的按钮
 -(void)addRightNagationBar{
     AppDelegate *ap=[UIApplication sharedApplication].delegate;
     NSLog(@"转报销转借款%@",ap.zhuanStr);
     NSLog(@"转报销转借款%@",self.leixing);
-//    if ([ap.danJu isEqualToString:@"未完成审批"]) {
-//        if ([ap.flowstatus isEqualToString:@"未提交"]||[ap.flowstatus isEqualToString:@"已退回"]||[ap.flowstatus isEqualToString:@"已弃申"]) {
-//            
-//            
-//            UIBarButtonItem *item3 = [[UIBarButtonItem alloc] initWithTitle:@"编辑" style:UIBarButtonItemStylePlain target:self action:@selector(item3Click:)];
-//       //     self.navigationItem.rightBarButtonItems = @[item3];
-//        }
-//    }
+    //    if ([ap.danJu isEqualToString:@"未完成审批"]) {
+    //        if ([ap.flowstatus isEqualToString:@"未提交"]||[ap.flowstatus isEqualToString:@"已退回"]||[ap.flowstatus isEqualToString:@"已弃申"]) {
+    //
+    //
+    //            UIBarButtonItem *item3 = [[UIBarButtonItem alloc] initWithTitle:@"编辑" style:UIBarButtonItemStylePlain target:self action:@selector(item3Click:)];
+    //       //     self.navigationItem.rightBarButtonItems = @[item3];
+    //        }
+    //    }
     
     
     if ([ap.zhuanStr isEqualToString:@"11"]) {
@@ -230,31 +221,30 @@
                 UIBarButtonItem *item1 = [[UIBarButtonItem alloc] initWithTitle:@"转报销" style:UIBarButtonItemStylePlain target:self action:@selector(item1Click:)];
                 if (self.changeArr.count) {
                     self.navigationItem.rightBarButtonItem = item1;}
-                }else if ([self.leixing isEqualToString:@"差旅申请借款明细"]){
+            }else if ([self.leixing isEqualToString:@"差旅申请借款明细"]){
                 
-                    UIBarButtonItem *item2 = [[UIBarButtonItem alloc] initWithTitle:@"转借款" style:UIBarButtonItemStylePlain target:self action:@selector(item2Click:)];
-                    if (self.changeArr.count) {
-                        self.navigationItem.rightBarButtonItem=item2;
-                        
-                        
-                    }
-
-                
+                UIBarButtonItem *item2 = [[UIBarButtonItem alloc] initWithTitle:@"转借款" style:UIBarButtonItemStylePlain target:self action:@selector(item2Click:)];
+                if (self.changeArr.count) {
+                    self.navigationItem.rightBarButtonItem=item2;
+                    
+                    
                 }
-            
-//            UIBarButtonItem *item1 = [[UIBarButtonItem alloc] initWithTitle:@"转报销" style:UIBarButtonItemStylePlain target:self action:@selector(item1Click:)];
-//            
-//            UIBarButtonItem *item2 = [[UIBarButtonItem alloc] initWithTitle:@"转借款" style:UIBarButtonItemStylePlain target:self action:@selector(item2Click:)];
-//            if (self.changeArr.count) {
-//                self.navigationItem.rightBarButtonItems = @[item1, item2];
-//                
                 
+                
+            }
+            
+            //            UIBarButtonItem *item1 = [[UIBarButtonItem alloc] initWithTitle:@"转报销" style:UIBarButtonItemStylePlain target:self action:@selector(item1Click:)];
+            //
+            //            UIBarButtonItem *item2 = [[UIBarButtonItem alloc] initWithTitle:@"转借款" style:UIBarButtonItemStylePlain target:self action:@selector(item2Click:)];
+            //            if (self.changeArr.count) {
+            //                self.navigationItem.rightBarButtonItems = @[item1, item2];
+            //
+            
             
         }
     }
     NSLog(@"changeArr%@",self.changeArr);
 }
-
 -(void)item1Click:(id)sender{
     if (self.changeArr.count) {
         for (int i=0; i<self.changeArr.count; i++) {
@@ -305,7 +295,6 @@
         }
     }
 }
-
 //wo上传后台转借款或报销
 
 -(void)zhuanBaoXiaoHuoJieKuan{
@@ -326,8 +315,6 @@
     
 }
 
-
-
 - (void)editItem{
     
     if (self.topConstaraint.constant == -188.0f) {
@@ -337,12 +324,6 @@
         self.topConstaraint.constant = -188.0f;
     
 }
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
 - (void)addFooterView{
     infoView = [[UIView alloc] initWithFrame:CGRectMake(10, SCREEN_HEIGHT - 50 - textFiledHeight, SCREEN_WIDTH - 20, 50 + textFiledHeight)];
     infoView.backgroundColor = [UIColor whiteColor];
@@ -357,7 +338,7 @@
         self.beizhuText.borderStyle = UITextBorderStyleRoundedRect;
         self.beizhuText.font = [UIFont systemFontOfSize:13];
     }
-
+    
     [infoView addSubview:self.beizhuText];
     
     CGFloat btnWidth = (CGRectGetWidth(infoView.frame) - 40) / 2.0f;
@@ -394,14 +375,14 @@
     NSLog(@"意义%@",str);
     [RequestCenter GetRequest:str                   parameters:nil
                       success:^(AFHTTPRequestOperation *operation, NSDictionary *responseObject) {
-
+                          
                           NSDictionary * mainLayout = [[[responseObject objectForKey:@"msg"] objectForKey:@"fieldconf"] objectForKey:@"main"];
                           NSLog(@"字典%@",mainLayout);
                           NSArray * costLayout = [[[responseObject objectForKey:@"msg"] objectForKey:@"fieldconf"] objectForKey:@"details"];
-//                          NSLog(@"数组%@",costLayout[0]);
-//wo
-//                          self.leixing=[costLayout[0] objectForKey:@"name"];
-                     //     NSLog(@"类型%@",self.leixing);
+                          //                          NSLog(@"数组%@",costLayout[0]);
+                          //wo
+                          //                          self.leixing=[costLayout[0] objectForKey:@"name"];
+                          //     NSLog(@"类型%@",self.leixing);
                           
                           
                           [_mainLayoutArray addObjectsFromArray:[LayoutModel objectArrayWithKeyValuesArray:[mainLayout objectForKey:@"fields"]]];
@@ -409,9 +390,9 @@
                           
                           
                           //wo
-//                          self.changeArr=[[NSMutableArray alloc] init];
-//                          self.changeArr=[[responseObject objectForKey:@"msg"] objectForKey:@"btn"];
-//                          
+                          //                          self.changeArr=[[NSMutableArray alloc] init];
+                          //                          self.changeArr=[[responseObject objectForKey:@"msg"] objectForKey:@"btn"];
+                          //
                           
                           
                           NSArray *dataArr = [[responseObject objectForKey:@"msg"] objectForKey:@"data"];
@@ -421,15 +402,15 @@
                           
                           [_costData addObjectsFromArray:[dataArr objectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(1, _costLayoutArray.count)]]];
                           _uploadArr = [NSMutableArray arrayWithArray:[[responseObject objectForKey:@"msg"] objectForKey:@"upload"]];
-//                          if (_uploadArr==nil) {
-//                              UIImageView *image = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"ab_nav_bg.png"]];
-//                              [_uploadArr addObject:image];
-//                              
-//                          }
+                          //                          if (_uploadArr==nil) {
+                          //                              UIImageView *image = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"ab_nav_bg.png"]];
+                          //                              [_uploadArr addObject:image];
+                          //
+                          //                          }
                           [self.tableView reloadData];
                           [SVProgressHUD dismiss];
                           //wo
-//                      [self addRightNagationBar];
+                          //                      [self addRightNagationBar];
                       }
                       failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                           
@@ -464,7 +445,7 @@
     [RequestCenter GetRequest:[NSString stringWithFormat:@"ac=GetFlowPath&u=%@&ukey=%@&ProgramID=%@&Billid=%@",self.uid,self.ukey,self.programeId,self.billid]
                    parameters:nil
                       success:^(AFHTTPRequestOperation *operation, NSDictionary *responseObject) {
-                           _pathFlow = [[responseObject objectForKey:@"msg"] objectForKey:@"data"];
+                          _pathFlow = [[responseObject objectForKey:@"msg"] objectForKey:@"data"];
                           [SVProgressHUD dismiss];
                           [self.tableView reloadData];
                       }
@@ -538,13 +519,13 @@
                           if ([[responseObject objectForKey:@"msg"] isEqualToString:@"ok"]) {
                               [btn setTitle:@"已关注" forState:UIControlStateNormal];
                               [SVProgressHUD showSuccessWithStatus:@"关注成功!"];
-                             // [self backVC];
+                              // [self backVC];
                           }
                           else
                               [self showAlertView:[responseObject objectForKey:@"msg"]];
                       }
                       failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-                           [SVProgressHUD dismiss];
+                          [SVProgressHUD dismiss];
                       }
             showLoadingStatus:NO];
     
@@ -555,13 +536,13 @@
 - (void)singleApprove:(UnApprovalModel *)model type:(NSString *)type{
     //http://27.115.23.126:3032/ashx/mobile.ashx?ac=Approve&u=1&ukey=abc&ProgramID=130102&Billid=3&BillNo=NO130102_9&disc=fuck&stepid=617&returnrule=&dynamicid=6976&returntodynid=0&resultType=pass
     NSString *returntodynid = @"0";
-//    if (![model.returnrule isEqualToString:@"ChoiceReturnStep"]) {
-//        returntodynid = @"0";
-//    }
-//    else
-//    {
-//        
-//    }
+    //    if (![model.returnrule isEqualToString:@"ChoiceReturnStep"]) {
+    //        returntodynid = @"0";
+    //    }
+    //    else
+    //    {
+    //
+    //    }
     
     //wo
     NSString *strRequest=[NSString stringWithFormat:@"ac=Approve&u=%@&ukey=%@&ProgramID=%@&Billid=%@&BillNo=%@&disc=%@&stepid=%@&returnrule=%@&dynamicid=%@&returntodynid=%@&resultType=%@",self.uid,self.ukey,model.programid,model.billid,model.billno,[_beizhuText.text stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],model.stepid,model.returnrule,model.dynamicid,returntodynid,type];
@@ -652,10 +633,17 @@
                 subBtn.selected = YES;
                 CGRect frame = self.lineView.frame;
                 [UIView animateWithDuration:0.3 animations:^{
-                    self.lineLeftConstraint.constant =frame.size.width * (subBtn.tag - 10);
+//                    self.lineLeftConstraint.constant =frame.size.width * (subBtn.tag - 10);
+                     self.lineLeftConstraint.constant =frame.size.width * (subBtn.tag -10);
                 }];
                 if (sender.tag == 10) {
                     self.selectedIndex = 0;
+//                    if ( self.views.view.hidden==NO) {
+//                        self.views.view.hidden=YES;
+//                    }
+                    if (self.contentCz.hidden==NO) {
+                        self.contentCz.hidden=YES;
+                    }
                     footerView.hidden = NO;
                     if (self.billType == 1) {
                         self.tableViewBottomConstraint.constant = lastConstant;
@@ -667,10 +655,12 @@
                     
                 }
                 else if(sender.tag == 11){
-                    if ( self.views.view.hidden==NO) {
-                        self.views.view.hidden=YES;
+//                    if ( self.views.view.hidden==NO) {
+//                        self.views.view.hidden=YES;
+//                    }
+                    if (self.contentCz.hidden==NO) {
+                        self.contentCz.hidden=YES;
                     }
-                    
                     self.selectedIndex = 1;
                     if (self.dataArray.count == 0) {
                         [self requestHistory];
@@ -678,56 +668,48 @@
                     footerView.hidden = YES;
                     self.tableViewBottomConstraint.constant = 0;
                 }
-                else if (sender.tag==12)
-                {
-                    if ( self.views.view.hidden==NO) {
-                        self.views.view.hidden=YES;
+                else if (sender.tag == 12){
+//                    if ( self.views.view.hidden==NO) {
+//                        self.views.view.hidden=YES;
+//                    }
+                    if (self.contentCz.hidden==NO) {
+                        self.contentCz.hidden=YES;
                     }
-                     self.views.view.hidden=YES;
                     self.selectedIndex = 2;
                     if (self.pathFlow.count == 0) {
                         [self requestFlowPath];
                     }
                     footerView.hidden = YES;
-                
-                   
-                    
-                    
-                    
-                    
-                    self.tableViewBottomConstraint.constant=0;
+                    self.tableViewBottomConstraint.constant = 0;
                 }
+                
                 else if (sender.tag == 13){
-                    self.selectedIndex = 3;
-                 
-//                    [self showCrile];
-//                    [_Crilece addSubview:self.Crilebgview];
-//                    self.crilceScrol.hidden=NO;
-                    // [self.view addSubview:_Crilece];
-//                    ViewController *view =[[[NSBundle mainBundle] loadNibNamed:@"ViewController" owner:self options:nil] lastObject];
-                    if ( self.views.view.hidden==YES) {
-                        self.views.view.hidden=NO;
+                    self.selectedIndex=3;
+//                    if ( self.views.view.hidden==YES) {
+//                        self.views.view.hidden=NO;
+//                    }
+//                    [self.view addSubview:self.HideView];
+//                    [self.view addSubview:self.views.view];
+//                    
+//                    footerView.hidden = YES;
+//                    self.tableViewBottomConstraint.constant = 0;
+                    if (self.contentCz.hidden==YES) {
+                        self.contentCz.hidden=NO;
                     }
-                    [self.view addSubview:self.views.view];
-                    
-                    
-                    footerView.hidden = YES;
-                   self.tableViewBottomConstraint.constant = 0;
+                      footerView.hidden = YES;
+                    self.tableViewBottomConstraint.constant = 0;
                 }
                 
+
                 [self.tableView reloadData];
             }
-            else
+                        else
                 subBtn.selected = NO;
         }
         
     }
-
+    
 }
-
-
-
-
 - (BOOL)isUnCommint{
     NSDictionary *mainDataDic = [_mainData safeObjectAtIndex:0];
     return [[mainDataDic objectForKey:@"flowstatus_show"] isEqualToString:@"未提交"] || [[mainDataDic objectForKey:@"flowstatus_show"] isEqualToString:@"已弃审"] || [[mainDataDic objectForKey:@"flowstatus_show"] isEqualToString:@"已退回"];
@@ -761,7 +743,6 @@
         }
     }
 }
-
 #pragma mark - UITableView Delegate && DataSource
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
@@ -771,22 +752,22 @@
         case 0:
         {
             if (_mainLayoutArray.count == 0) {
-               number = 0;
+                number = 0;
             }
             else if (_uploadArr.count == 0){
                 if ([self isUnCommint]) {
                     number = _mainLayoutArray.count + 2;
-                 
+                    
                 }
                 else{
-                   number = _mainLayoutArray.count + 1;
+                    number = _mainLayoutArray.count + 1;
                     //更多
                     
                 }
             }
             else
                 number = _mainLayoutArray.count + 2;
-          
+            
         }
             break;
         case 1:{
@@ -796,9 +777,8 @@
         case 2:{
             number = self.pathFlow.count;
         }
-            
             break;
-         case 3:
+        case 3:
         {
             number = 1;
         }
@@ -814,8 +794,8 @@
     switch (_selectedIndex) {
         case 0:
         {
-            NSString *cellid = @"cell";
-            BillsDetailViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellid];
+            NSString *cellid = @"cell2";
+            ShenpiTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellid];
             
             UIView *subView = [cell.contentView viewWithTag:203];
             UIView *subView1 = [cell.contentView viewWithTag:204];
@@ -830,7 +810,7 @@
                 cell.titleLabel.text = [NSString stringWithFormat:@"%@:",model.name];
                 if([model.name containsString:@"<"]){
                     cell.titleLabel.text=[self filterHTML:[NSString stringWithFormat:@"%@",model.name]];
-                
+                    
                 }
                 cell.contentLabel.text = [mainDataDic objectForKey:model.fieldname];
                 
@@ -848,17 +828,17 @@
                 [cell.contentView addSubview:[self costScrollView]];
                 
             }
-//            else if (indexPath.row > _mainLayoutArray.count - 3 && indexPath.row < _mainLayoutArray.count + 1){
-//                LayoutModel *model = [_mainLayoutArray safeObjectAtIndex:indexPath.row - 1];
-//                cell.titleLabel.text = [NSString stringWithFormat:@"%@:",model.name];
-//                cell.contentLabel.text = [mainDataDic objectForKey:model.fieldname];
-//                cell.contentLabelHeight.constant = [self fixStr:[mainDataDic objectForKey:model.fieldname]];
-//                if ([model.fieldname isEqualToString:@"totalmoney"]) {
-//                    cell.contentLabel.textColor = [UIColor hex:@"f23f4e"];
-//                }
-//                else
-//                    cell.contentLabel.textColor = [UIColor hex:@"333333"];
-//            }
+            //            else if (indexPath.row > _mainLayoutArray.count - 3 && indexPath.row < _mainLayoutArray.count + 1){
+            //                LayoutModel *model = [_mainLayoutArray safeObjectAtIndex:indexPath.row - 1];
+            //                cell.titleLabel.text = [NSString stringWithFormat:@"%@:",model.name];
+            //                cell.contentLabel.text = [mainDataDic objectForKey:model.fieldname];
+            //                cell.contentLabelHeight.constant = [self fixStr:[mainDataDic objectForKey:model.fieldname]];
+            //                if ([model.fieldname isEqualToString:@"totalmoney"]) {
+            //                    cell.contentLabel.textColor = [UIColor hex:@"f23f4e"];
+            //                }
+            //                else
+            //                    cell.contentLabel.textColor = [UIColor hex:@"333333"];
+            //            }
             else if (indexPath.row == _mainLayoutArray.count + 1){
                 cell.titleLabel.text =nil;
                 cell.contentLabel.text = nil;
@@ -878,7 +858,7 @@
             }
             
             return cell;
-
+            
         }
             break;
         case 1:{
@@ -893,7 +873,7 @@
             cell.advice.text = model.resulttype;
             cell.stepName.text = model.stepname;
             cell.stepName.hidden = model.stepname.length > 0 ?NO : YES;
-           //wo    退回意见
+            //wo    退回意见
             if ([model.resulttype isEqualToString:@"不同意"]) {
                 cell.advice.text = model.appopinion;
             }else{
@@ -939,71 +919,88 @@
                 if ([[[_pathFlow objectAtIndex:indexPath.row] objectForKey:@"isactive"] isEqualToString:@"1"]) {
                     cell.lab_title.backgroundColor = [UIColor colorWithRed:0.847 green:0.737 blue:0.267 alpha:1.000];
                     cell.lab_title.text = [cell.lab_title.text stringByAppendingString:@"(审批中)"];
-                    
                 }
             }
             cell.backgroundColor = [UIColor clearColor];
             return cell;
-
+            
         }
             break;
-        case 3:
+         case 3:
         {
-            UITableViewCell *cell =[tableView dequeueReusableCellWithIdentifier:@"cell3"];
+            UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell3"];
             if (!cell) {
                 cell =[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell3"];
-                UIView *cirle =[[UIView  alloc] initWithFrame:CGRectMake(0, 100, SCREEN_WIDTH, SCREEN_HEIGHT)];
-                cirle.backgroundColor =[UIColor blueColor];
-                [cell.contentView addSubview:cirle];
-                
+                 cell.selectionStyle = UITableViewCellSelectionStyleNone;
+               
             }
+           
+            [self.MaRu reloadData];
+            [self.chart reloadData];
+            [self.contentCz addSubview:view];
+            
+            [cell.contentView addSubview:self.contentCz];
+            
             return cell;
-            
-            
-            
-            
-            
+
         }
             break;
         default:
             break;
     }
-
+    
     return nil;
     
-
+    
 }
-
+#pragma mark ----饼图
+-(void)MaruGodo
+{
+    self.MaRu = [[XYPieChart alloc] initWithFrame:CGRectMake(10, 20, view.frame.size.width-150, view.frame.size.height-160)];
+    self.MaRu.dataSource=self;
+    self.MaRu.delegate=self;
+    self.MaRu.startPieAngle=M_PI_2;
+    self.MaRu.pieCenter = CGPointMake(view.center.x, 120);
+    self.MaRu.animationSpeed =1.0;
+   
+    self.MaRu.showPercentage= YES;
+    self.Criclecolour = [NSArray arrayWithObjects:
+                         [UIColor colorWithRed:123/255.0 green:155/255.0 blue:0/255.0 alpha:1],
+                         [UIColor colorWithRed:69/255.0 green:98/255.0 blue:166/255.0 alpha:1],nil];
+     [view addSubview:self.MaRu];
+    
+    
+}
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     
     CGFloat rowHeight = 0.0f;
     
     if (self.selectedIndex == 0) {
         NSDictionary *mainDataDic = [_mainData safeObjectAtIndex:0];
-         if (indexPath.row == _mainLayoutArray.count + 1 && _uploadArr.count != 0){
-             NSInteger count = _imageArray.count + _uploadArr.count;
-             CGFloat speace = 15.0f;
-             CGFloat imageWidth = (SCREEN_WIDTH - 36 -4*speace) / 3.0f;
-             int row;
-             if (count %3 == 0) {
-                 row = count / 3;
-             }
-             else{
-                 row = count / 3 + 1;
-             }
-             return (speace + imageWidth) * row + 90;
+        if (indexPath.row == _mainLayoutArray.count + 1 && _uploadArr.count != 0){
+            NSInteger count = _imageArray.count + _uploadArr.count;
+            CGFloat speace = 15.0f;
+            CGFloat imageWidth = (SCREEN_WIDTH - 36 -4*speace) / 3.0f;
+            int row;
+            if (count %3 == 0) {
+                row = count / 3;
+            }
+            else{
+                row = count / 3 + 1;
+            }
+            return (speace + imageWidth) * row + 90;
         }
-         else if (indexPath.row == _mainLayoutArray.count + 1 && _uploadArr.count == 0 && [self isUnCommint]){
-             NSInteger count = _imageArray.count + _uploadArr.count;
-             CGFloat speace = 15.0f;
-             CGFloat imageWidth = (SCREEN_WIDTH - 36 -4*speace) / 3.0f;
-             int row = count / 3 + 1;
-             return (speace + imageWidth) * row + 10;
-         }
-//        else if (indexPath.row > _mainLayoutArray.count - 3 && indexPath.row < _mainLayoutArray.count + 1){
-//            LayoutModel *model = [_mainLayoutArray safeObjectAtIndex:indexPath.row - 1];
-//            rowHeight = [self fixStr:[mainDataDic objectForKey:model.fieldname]] + 20;
-//        }
+        else if (indexPath.row == _mainLayoutArray.count + 1 && _uploadArr.count == 0 && [self isUnCommint]){
+            NSInteger count = _imageArray.count + _uploadArr.count;
+            CGFloat speace = 15.0f;
+            CGFloat imageWidth = (SCREEN_WIDTH - 36 -4*speace) / 3.0f;
+            int row = count / 3 + 1;
+            return (speace + imageWidth) * row + 10;
+        }
+        //        else if (indexPath.row > _mainLayoutArray.count - 3 && indexPath.row < _mainLayoutArray.count + 1){
+        //            LayoutModel *model = [_mainLayoutArray safeObjectAtIndex:indexPath.row - 1];
+        //            rowHeight = [self fixStr:[mainDataDic objectForKey:model.fieldname]] + 20;
+        //        }
         else if (indexPath.row < _mainLayoutArray.count){
             LayoutModel *model = [_mainLayoutArray safeObjectAtIndex:indexPath.row];
             rowHeight = [self fixStr:[mainDataDic objectForKey:model.fieldname]] + 20;
@@ -1015,13 +1012,13 @@
     }
     else if (self.selectedIndex==3)
     {
-        rowHeight = SCREEN_HEIGHT;
+        rowHeight=SCREEN_HEIGHT;
     }
     else
     {
         rowHeight = 90.0f;
     }
-
+    
     return rowHeight;
     
 }
@@ -1085,22 +1082,9 @@
         self.tableViewBottomConstraint.constant = 135.0f;
         lastConstant = 135.0f;
     }
-//    else
-//    {
-//       
-//            UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithTitle:@"dad" style:UIBarButtonItemStylePlain target:self action:@selector(fadsa)];
-//            self.navigationItem.rightBarButtonItem=item;
-//            
-//    }
-//    self.billType == 0 && ([[mainDataDic objectForKey:@"flowstatus_show"] isEqualToString:@"未提交"] ||[[mainDataDic objectForKey:@"flowstatus_show"] isEqualToString:@"已弃审"] ||
-//    if (self.billType==0&&[[mainDataDic objectForKey:@"flowstatus_show"]isEqualToString:@"已审核"]) {
-//        UIButton *button =[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 20, 20)];
-//        [button setBackgroundImage:[UIImage imageNamed:@"right_item"] forState:UIControlStateNormal];
-//        [button addTarget:self action:@selector(danju) forControlEvents:UIControlEventTouchUpInside];
-//        UIBarButtonItem *bar = [[UIBarButtonItem alloc] initWithCustomView:button];
-//        self.navigationItem.rightBarButtonItem=bar;
-    
     if (self.billType==0&&[[mainDataDic objectForKey:@"flowstatus_show"]isEqualToString:@"已提交"]) {
+        
+        
         
         UIButton *btn =[UIButton buttonWithType:UIButtonTypeCustom];
         [btn setFrame:CGRectMake(10, SCREEN_HEIGHT-60, SCREEN_WIDTH-20, 40)];
@@ -1149,11 +1133,11 @@
 }
 -(void)danju
 {
-   self.actionsheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"生成借款",@"生成报销", nil];
+    self.actionsheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"生成借款",@"生成报销", nil];
     self.actionsheet.tag=3;
     
     
-       
+    
     [self.actionsheet showInView:self.view];
     
 }
@@ -1167,10 +1151,10 @@
     bian.reloadData = ^(){
         [self.tableView.header beginRefreshing];
         
-    
+        
     };
     [self.navigationController pushViewController:bian animated:YES];
-   
+    
 }
 - (void)callAction{
     
@@ -1190,11 +1174,10 @@
  *
  *  @param type type 0:现实输入框 1： 不显示输入框
  */
-
 - (void)resizeFootViewFrame:(NSInteger)type{
     if (type == 0) {
         textFiledHeight = 30;
-       // UIView *view = [self.view viewWithTag:1024];
+        // UIView *view = [self.view viewWithTag:1024];
         self.tableViewBottomConstraint.constant = 60 + textFiledHeight;
         self.beizhuText.frame = CGRectMake(10, 10, CGRectGetWidth(infoView.frame) - 20, textFiledHeight);
         infoView.frame = CGRectMake(10, SCREEN_HEIGHT - 50 - textFiledHeight, SCREEN_WIDTH - 20, 50 + textFiledHeight);
@@ -1205,7 +1188,7 @@
     else
     {
         textFiledHeight = 0;
-       // UIView *view = [self.view viewWithTag:1024];
+        // UIView *view = [self.view viewWithTag:1024];
         self.tableViewBottomConstraint.constant = 50 + textFiledHeight;
         self.beizhuText.frame = CGRectMake(10, 0, CGRectGetWidth(infoView.frame) - 20, textFiledHeight);
         infoView.frame = CGRectMake(10, SCREEN_HEIGHT - 50 - textFiledHeight, SCREEN_WIDTH - 20, 50 + textFiledHeight);
@@ -1213,7 +1196,7 @@
         [sureBtn setFrame:CGRectMake(10, 10 , btnWidth, 30)];
         [backBatn setFrame:CGRectMake(CGRectGetMaxX(sureBtn.frame) + 20, CGRectGetMinY(sureBtn.frame), btnWidth, 30)];
     }
-
+    
     lastConstant = self.tableViewBottomConstraint.constant;
 }
 
@@ -1236,23 +1219,23 @@
         [subView removeFromSuperview];
     }
     
-//    CGFloat width = CGRectGetWidth(view.frame);
-//    CGFloat itemWidth = (width - 4)/3;
-//    int rows = _uploadArr.count / 3 + 1;
-//    [view setFrame:CGRectMake(18, 0, SCREEN_WIDTH - 36, itemWidth * 0.75 * rows)];
-//    for (int i = 0; i < _uploadArr.count; i++) {
-//        int colum = i %3;
-//        int row = i/3;
-//        NSString *url = [_uploadArr safeObjectAtIndex:i];
-//        UIButton *itemView = [UIButton buttonWithType:UIButtonTypeCustom];
-//    
-//        [itemView setFrame:CGRectMake(colum*(itemWidth + 2), row * (itemWidth * 0.75 + 2), itemWidth, itemWidth * 0.75)];
-//        itemView.tag = i;
-//        itemView.userInteractionEnabled  = YES;
-//        }
-//        [itemView addTarget:self action:@selector(showImage:) forControlEvents:UIControlEventTouchUpInside];
-//        [view addSubview:itemView];
-//    }
+    //    CGFloat width = CGRectGetWidth(view.frame);
+    //    CGFloat itemWidth = (width - 4)/3;
+    //    int rows = _uploadArr.count / 3 + 1;
+    //    [view setFrame:CGRectMake(18, 0, SCREEN_WIDTH - 36, itemWidth * 0.75 * rows)];
+    //    for (int i = 0; i < _uploadArr.count; i++) {
+    //        int colum = i %3;
+    //        int row = i/3;
+    //        NSString *url = [_uploadArr safeObjectAtIndex:i];
+    //        UIButton *itemView = [UIButton buttonWithType:UIButtonTypeCustom];
+    //
+    //        [itemView setFrame:CGRectMake(colum*(itemWidth + 2), row * (itemWidth * 0.75 + 2), itemWidth, itemWidth * 0.75)];
+    //        itemView.tag = i;
+    //        itemView.userInteractionEnabled  = YES;
+    //        }
+    //        [itemView addTarget:self action:@selector(showImage:) forControlEvents:UIControlEventTouchUpInside];
+    //        [view addSubview:itemView];
+    //    }
     if (_uploadArr.count != 0 || _imageArray.count != 0) {
         NSInteger count = _uploadArr.count;
         CGFloat speace = 15.0f;
@@ -1325,7 +1308,7 @@
             [addImage addTarget:self action:@selector(showPickImageVC) forControlEvents:UIControlEventTouchUpInside];
             [bgView addSubview:addImage];
         }
-
+        
     }
     
 }
@@ -1360,7 +1343,7 @@
         _imageArray = [[NSMutableArray alloc] initWithCapacity:0];
     }
     self.actionsheet= [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"取消" destructiveButtonTitle:nil otherButtonTitles:@"拍照",@"本地相册", nil];
-   self.actionsheet.tag=2;
+    self.actionsheet.tag=2;
     [self.actionsheet showInView:self.view];
     
 }
@@ -1391,10 +1374,8 @@
             
         }
     }
-   
+    
 }
-
-//
 
 - (void)uploadClick:(UIButton *)btn{
     [self uploadImage:0];
@@ -1414,29 +1395,29 @@
     [[AFHTTPRequestOperationManager manager] POST:str
                                        parameters:_imageArray.count != 0? @{@"FByte":fbyte} : nil
                                           success:^(AFHTTPRequestOperation *operation, id responseObject) {
-//                                              if ([[responseObject objectForKey:@"msg"] isEqualToString:@"ok"]) {
-                                                  [SVProgressHUD dismiss];
-                                                  if (index + 1 < _imageArray.count) {
-                                                      [self uploadImage:index + 1];
+                                              //                                              if ([[responseObject objectForKey:@"msg"] isEqualToString:@"ok"]) {
+                                              [SVProgressHUD dismiss];
+                                              if (index + 1 < _imageArray.count) {
+                                                  [self uploadImage:index + 1];
+                                              }
+                                              if (index + 1 == _imageArray.count - 1) {
+                                                  [self.navigationController popViewControllerAnimated:YES];
+                                                  if (self.reloadData) {
+                                                      self.reloadData();
                                                   }
-                                                  if (index + 1 == _imageArray.count - 1) {
-                                                      [self.navigationController popViewControllerAnimated:YES];
-                                                      if (self.reloadData) {
-                                                          self.reloadData();
-                                                      }
-                                                  }
+                                              }
                                               if (_imageArray.count == 0 && delteImageID.length != 0) {
                                                   [self.navigationController popViewControllerAnimated:YES];
                                                   if (self.reloadData) {
                                                       self.reloadData();
                                                   }
                                               }
-//                                              }
+                                              //                                              }
                                           }
                                           failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                                               
                                           }];
-
+    
 }
 
 - (NSString *)bate64ForImage:(UIImage *)image{
@@ -1534,10 +1515,10 @@
                                                   fauiler:^(NSError *error) {
                                                       
                                                   }];
-
+        
         
     }
-        
+    
     else {
         SDPhotoBrowser *browser = [[SDPhotoBrowser alloc] init];
         browser.tag = 10;
@@ -1573,14 +1554,14 @@
         [btn setFrame:CGRectMake(i*(60 + 35), 10, 57, 57)];
         [btn addTarget:self action:@selector(costDetail:) forControlEvents:UIControlEventTouchUpInside];
         btn.contentMode = UIViewContentModeScaleAspectFit;
-//        [btn sd_setBackgroundImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",model.photopath]]
-//                                 forState:UIControlStateNormal
-//                                completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
-//         }];
+        //        [btn sd_setBackgroundImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",model.photopath]]
+        //                                 forState:UIControlStateNormal
+        //                                completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
+        //         }];
         [btn sd_setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@",model.photopath]]  forState:UIControlStateNormal placeholderImage:[UIImage imageNamed:@"ab_nav_bg.png"]];
         
         btn.tag = i;
-    
+        
         UILabel *totleMoney = [[UILabel alloc] initWithFrame:CGRectMake(0, 37, 57, 15)];
         totleMoney.textColor = [UIColor whiteColor];
         totleMoney.font = [UIFont systemFontOfSize:15];
@@ -1651,5 +1632,86 @@
         send.msgType = SendMessageTableType;
     }
 }
+
+//wo上传后台转借款或报销
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+#pragma mark----饼状图代理
+-(NSUInteger)numberOfSlicesInPieChart:(XYPieChart *)pieChart
+{
+  
+    return _Criclearray.count;;
+    
+}
+-(CGFloat)pieChart:(XYPieChart *)pieChart valueForSliceAtIndex:(NSUInteger)index
+{
+    
+    
+      return  [[_Criclearray objectAtIndex:index] intValue];
+    
+    //    else
+    //    {
+    //        a = [[_twoCsarry objectAtIndex:index] intValue];
+    //    }
+    
+}
+-(UIColor *)pieChart:(XYPieChart *)pieChart colorForSliceAtIndex:(NSUInteger)index
+{
+    //颜色分配
+    //    if (pieChart ==self.cirleview) return nil;
+    //    if (pieChart == self.twoCircle) {
+    //        return [self.Criclecolour objectAtIndex:(index%self.Criclecolour.count)];
+    //    }else
+    //    {
+    //    return [self.Criclecolour objectAtIndex:(index%self.Criclecolour.count)];
+    //
+    
+    //    }
+   
+    
+    return [self.Criclecolour objectAtIndex:(index%self.Criclecolour.count)];
+    
+}
+-(void)pieChart:(XYPieChart *)pieChart didSelectSliceAtIndex:(NSUInteger)index
+{
+ 
+    
+    NSLog(@";");
+    
+}
+#pragma mark-----柱状图
+-(NSUInteger)numberOfBarsInBarChart:(SimpleBarChart *)barChart
+{
+    return self.values.count;
+}
+-(CGFloat)barChart:(SimpleBarChart *)barChart valueForBarAtIndex:(NSUInteger)index
+{
+    return [[self.values objectAtIndex:index] floatValue];
+    
+}
+-(NSString *)barChart:(SimpleBarChart *)barChart textForBarAtIndex:(NSUInteger)index
+{
+    return [[self.values objectAtIndex:index] stringValue];
+    
+}
+-(NSString *)barChart:(SimpleBarChart *)barChart xLabelForBarAtIndex:(NSUInteger)index
+{
+    return [[self.values objectAtIndex:index] stringValue];
+}
+-(UIColor *)barChart:(SimpleBarChart *)barChart colorForBarAtIndex:(NSUInteger)index
+{
+    return [self.haikei objectAtIndex:self.currentbar];
+}
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
 
 @end

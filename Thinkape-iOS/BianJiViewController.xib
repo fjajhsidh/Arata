@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9531" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="BianJiViewController">
@@ -17,20 +17,20 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="KcV-pA-O6v">
-                    <rect key="frame" x="0.0" y="0.0" width="600" height="551"/>
+                    <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="551" id="J3N-Et-Erw"/>
+                        <constraint firstAttribute="height" constant="600" id="DcQ-Xg-1lD"/>
                     </constraints>
                 </tableView>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <gestureRecognizers/>
             <constraints>
-                <constraint firstItem="KcV-pA-O6v" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="BRj-vx-Nnm"/>
-                <constraint firstItem="KcV-pA-O6v" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="V8E-BG-FLb"/>
-                <constraint firstAttribute="bottom" secondItem="KcV-pA-O6v" secondAttribute="bottom" constant="49" id="hIX-Kv-giX"/>
-                <constraint firstAttribute="trailing" secondItem="KcV-pA-O6v" secondAttribute="trailing" id="vZY-7E-aGC"/>
+                <constraint firstAttribute="bottom" secondItem="KcV-pA-O6v" secondAttribute="bottom" id="GI7-Ht-hEP"/>
+                <constraint firstItem="KcV-pA-O6v" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="Oa3-i3-w4S"/>
+                <constraint firstAttribute="trailing" secondItem="KcV-pA-O6v" secondAttribute="trailing" id="au5-oT-6mp"/>
+                <constraint firstItem="KcV-pA-O6v" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="kU7-Ep-tyl"/>
             </constraints>
         </view>
     </objects>

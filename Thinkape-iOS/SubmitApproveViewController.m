@@ -44,6 +44,8 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
     BOOL commintBills;
     BOOL isSingal;
     NSString *_sqlstr;
+    CGFloat Text_y;
+    CGFloat distances;
 //    NSString *_field;
 }
 
@@ -92,7 +94,8 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    _delaysContentTouches = NO;
+    Text_y=0;
+    distances=0;
     
     _searchArray = [[NSMutableArray alloc] init];
     _selectModel = [[KindsModel alloc] init];
@@ -139,11 +142,25 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
     self.calculatorvc=[[CalculatorViewController alloc]init];
     self.calculatorvc.delegate=self;
     self.textfield = [[UITextField alloc] init];
-
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardShowsd:) name:UIKeyboardWillShowNotification object:nil];
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardHidensd:) name:UIKeyboardWillHideNotification object:nil];
     
 }
 
-
+- (void)keyboardShowsd:(NSNotification *)notification{
+    NSDictionary *keyBoardInfo = [notification userInfo];
+    NSValue *aValue = [keyBoardInfo objectForKey:@"UIKeyboardFrameEndUserInfoKey"];
+    CGRect rect = [aValue CGRectValue];
+    CGFloat keyBoard_Y = rect.origin.y;
+    if (Text_y > keyBoard_Y && Text_y!= 0) {
+        distances =Text_y - keyBoard_Y + 100;
+        self.view.frame = CGRectMake(0, -distances, self.view.frame.size.width, self.view.frame.size.height);
+    }
+}
+- (void)keyboardHidensd:(NSNotification *)notification{
+    Text_y= 0;
+    self.view.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
+}
 /**
  *  初始化详细表单分类界面
  *
@@ -210,7 +227,8 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
     NSString *idStr = @"";
     NSString *nameStr = @"";
     NSInteger tag = view.tag;
-    KindsLayoutModel *layoutModel = [self.layoutArray safeObjectAtIndex:tag];
+//    KindsLayoutModel *layoutModel = [self.layoutArray safeObjectAtIndex:tag];
+     KindsLayoutModel *layoutModel = [self.layoutArray safeObjectAtIndex:tag];
     int i = 0;
     for (KindsItemModel *model in arr) {
         if (i == 0) {
@@ -1167,7 +1185,9 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
         if(indexPath.row == 0){
             
         }else{
+            
             [self.cell_data setObject:cell.contentText forKey:layoutModel.key];
+           
         }
        
         NSString *value = [self.tableViewDic objectForKey:layoutModel.key];
@@ -1186,9 +1206,7 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
             if (layoutModel.IsMust == 1) {
                 cell.contentText.placeholder = @"请输入，不能为空";
             }
-            if ([layoutModel.SqlDataType isEqualToString:@"number"]) {
-                cell.contentText.keyboardType =UIKeyboardTypeDecimalPad ;
-            }
+           
         }
     
         return cell;
@@ -1322,13 +1340,15 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
                            
                                self.messageid = [f_id objectAtIndex:1];
                                NSLog(@"msg分割=%@",[array objectAtIndex:i] );
-                               self.textfield = [self.cell_data objectForKey:field];
-                               self.textfield.text = self.namestr;
                                
+                               self.textfield = [self.cell_data objectForKey:field];
+                              
+                               self.textfield.text =self.namestr;
                             
                                [self.XMLParameterDic setObject:self.messageid forKey:field];
                            
                                [self.tableViewDic setObject:self.namestr forKey:field];
+                               
 
                            }else{
                         

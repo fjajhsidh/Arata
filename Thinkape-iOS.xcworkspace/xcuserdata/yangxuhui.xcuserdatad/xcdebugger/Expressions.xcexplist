@@ -9,6 +9,14 @@
          contextName = "__42-[SubmitApproveViewController setdefaults]_block_invoke_2:SubmitApproveViewController.m">
       </ContextState>
       <ContextState
+         contextName = "-[ShenPI tableView:cellForRowAtIndexPath:]:ShenPI.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "[mainDataDic objectForKey:model.fieldname]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "-[SubmitApproveViewController setdefaults]:SubmitApproveViewController.m">
       </ContextState>
       <ContextState

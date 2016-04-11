@@ -231,8 +231,8 @@
         [self.calculatorView removeFromSuperview];
         
     }
-
-    if (![model2.datasource isEqualToString:@"0"]&&![model2.sqldatatype isEqualToString:@"date"]) {
+// if (![model2.datasource isEqualToString:@"0"]&&![model2.sqldatatype isEqualToString:@"date"])
+    if (![model2.datasource isEqualToString:@"0"]&&![model2.sqldatatype isEqualToString:@"date"]){
         
         isSinglal =model2.issingle;
         //调用隐藏点选框的操作：
@@ -293,8 +293,8 @@
     
     NSInteger tag = view.tag;
 
-    
-    MiXimodel *layoutModel = [self.coster.fileds safeObjectAtIndex:self.textfield.tag];
+//    MiXimodel *layoutModel = [self.coster.fileds safeObjectAtIndex:self.textfield.tag];
+    MiXimodel *layoutModel = [self.coster.fileds safeObjectAtIndex:tag];
     NSLog(@"键值：%@=%@",layoutModel.fieldname,name);
     
     [self.dict1 setObject:name forKey:layoutModel.fieldname];

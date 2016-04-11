@@ -32,7 +32,7 @@
 #import "BianJiViewController.h"
 #import "CalculatorViewController.h"
 #import "calculatorView.h"
-#import "IQKeyboardManager.h"
+//#import "IQKeyboardManager.h"
 @interface MixiViewController ()<UITextFieldDelegate,KindsItemsViewDelegate,UINavigationControllerDelegate,SDPhotoBrowserDelegate,UIActionSheetDelegate,QLPreviewControllerDataSource,QLPreviewControllerDelegate,UIImagePickerControllerDelegate,CTAssetsPickerControllerDelegate,CalculatorResultDelegate>
 @property (weak, nonatomic) IBOutlet UITableView *tableview;
 
@@ -77,8 +77,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    Text_y=0;
-    distances=0;
+//    Text_y=0;
+//    distances=0;
     self.title=@"修改明细";
   
     UIButton *iconb =[[UIButton alloc] initWithFrame:CGRectMake(5, 0, 40, 40)];

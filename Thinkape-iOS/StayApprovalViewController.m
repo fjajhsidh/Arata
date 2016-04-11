@@ -11,8 +11,7 @@
 #import "StayApprovalViewCell.h"
 #import "StayApprovalDetailViewController.h"
 #import "UnApprovalModel.h"
-#import "BillsDetailViewController.h"
-
+#import "ShenPI.h"
 @interface StayApprovalViewController ()
 {
     BOOL isEdit;
@@ -396,7 +395,8 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    BillsDetailViewController *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"BillsDetail"];
+//     *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"BillsDetail"];
+    ShenPI  *vc = [self.storyboard instantiateViewControllerWithIdentifier:@"shepi"];
     if ([ac isEqualToString:@"GetMyApproved"]) {
         StayApprovalModel *model = [self.dataArray objectAtIndex:indexPath.row];
         vc.programeId = model.programid;

@@ -20,14 +20,20 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    
+    
+    self.window.backgroundColor =[UIColor clearColor];
+    
+    
+    
     [IQKeyboardManager sharedManager].enable = YES;
-    //[IQKeyboardManager sharedManager].enableAutoToolbar = YES;
+//   [IQKeyboardManager sharedManager].enableAutoToolbar = YES;
     [IQKeyboardManager sharedManager].shouldResignOnTouchOutside = YES;
     NSString *filePath = [NSString stringWithFormat:@"%@/account",NSHomeDirectory()];
 
     if (![DataManager shareManager].webDomain) {
         [DataManager shareManager].webDomain = @"http://27.115.23.126:5032";
-    }
+   }
     NSLog(@"path :%@",filePath);
 //嘻嘻嘻哈哈哈
     
@@ -46,11 +52,7 @@
     
     return YES;
 }
--(void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
-{
-    [self.window endEditing:YES];
-    
-}
+
 - (void)applicationWillResignActive:(UIApplication *)application {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
     // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
