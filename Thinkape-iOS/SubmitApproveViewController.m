@@ -601,6 +601,9 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
 
 // 编辑时  草稿 存为单据
 - (void)saveCGToBill:(NSString *)AG{
+    
+    
+    
     //http://27.115.23.126:3032/ashx/mobilenew.ashx?ac= SspCGToBills &u=9& sspid =3,4,5,6,7
     NSString *billsspid = commintBills ? sspid : _editModel.SspID;
     NSString *url = [NSString stringWithFormat:@"ac=SspCGToBills&u=%@&sspid=%@",self.uid,billsspid];

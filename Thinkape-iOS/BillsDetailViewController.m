@@ -656,13 +656,21 @@
                 }];
                 if (sender.tag == 10) {
                     self.selectedIndex = 0;
-                    footerView.hidden = NO;
-                    if (self.billType == 1) {
-                        self.tableViewBottomConstraint.constant = lastConstant;
+                    
+                    footerView.hidden = YES;
+                    if (self.billType==0) {
+                        lastConstant = 50;
+                         self.tableViewBottomConstraint.constant = lastConstant;
                     }
+                    if (self.billType == 1) {
+                       
+                        self.tableViewBottomConstraint.constant = lastConstant;
+                        
+                    }
+                    
                     NSDictionary *mainDataDic = [_mainData safeObjectAtIndex:0];
                     if (self.billType == 0 &&([[mainDataDic objectForKey:@"flowstatus_show"] isEqualToString:@"未提交"] || [[mainDataDic objectForKey:@"flowstatus_show"] isEqualToString:@"已弃审"] || [[mainDataDic objectForKey:@"flowstatus_show"] isEqualToString:@"已退回"])) {
-                        self.tableViewBottomConstraint.constant = 135.0f;
+                        self.tableViewBottomConstraint.constant =0;
                     }
                     
                 }
@@ -697,23 +705,7 @@
                     
                     self.tableViewBottomConstraint.constant=0;
                 }
-                else if (sender.tag == 13){
-                    self.selectedIndex = 3;
-                 
-//                    [self showCrile];
-//                    [_Crilece addSubview:self.Crilebgview];
-//                    self.crilceScrol.hidden=NO;
-                    // [self.view addSubview:_Crilece];
-//                    ViewController *view =[[[NSBundle mainBundle] loadNibNamed:@"ViewController" owner:self options:nil] lastObject];
-                    if ( self.views.view.hidden==YES) {
-                        self.views.view.hidden=NO;
-                    }
-                    [self.view addSubview:self.views.view];
-                    
-                    
-                    footerView.hidden = YES;
-                   self.tableViewBottomConstraint.constant = 0;
-                }
+                
                 
                 [self.tableView reloadData];
             }
@@ -875,6 +867,7 @@
                 [bgView removeFromSuperview];
                 [self addItems:bgView];
                 [cell.contentView addSubview:bgView];
+                self.tableViewBottomConstraint.constant =100;
             }
             
             return cell;
@@ -1013,6 +1006,7 @@
         else
             rowHeight = 0;
     }
+   
     else if (self.selectedIndex==3)
     {
         rowHeight = SCREEN_HEIGHT;
@@ -1181,6 +1175,7 @@
     }
     else
         [SVProgressHUD showInfoWithStatus:@"电话为空"];
+   
 }
 
 
@@ -1213,7 +1208,7 @@
         [sureBtn setFrame:CGRectMake(10, 10 , btnWidth, 30)];
         [backBatn setFrame:CGRectMake(CGRectGetMaxX(sureBtn.frame) + 20, CGRectGetMinY(sureBtn.frame), btnWidth, 30)];
     }
-
+   
     lastConstant = self.tableViewBottomConstraint.constant;
 }
 

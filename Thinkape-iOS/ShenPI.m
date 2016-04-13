@@ -29,7 +29,7 @@
 #import "AppDelegate.h"
 #import "ShenpiTableViewCell.h"
 #import "ViewController.h"
-
+#define DEVICE_IS_IPHONE5 ([[UIScreen mainScreen] bounds].size.height == 568)
 @interface ShenPI ()<SDPhotoBrowserDelegate,QLPreviewControllerDataSource,UIAlertViewDelegate,UINavigationControllerDelegate, UIImagePickerControllerDelegate,CTAssetsPickerControllerDelegate,UIActionSheetDelegate,XYPieChartDelegate,XYPieChartDataSource,SimpleBarChartDataSource, SimpleBarChartDelegate>
 {
      NSString *delteImageID;
@@ -54,6 +54,7 @@
 @property (nonatomic , strong) NSMutableArray *imageArray;
 @property(nonatomic,strong)UIActionSheet *actionsheet;
 
+
 //wo
 
 @property(strong,nonatomic)NSDictionary * changedict;
@@ -77,6 +78,15 @@
 @property(nonatomic,strong)NSArray *haikei;
 @property(nonatomic,assign)NSInteger currentbar;
 @property(nonatomic,strong)NSMutableArray *twoCsarry;
+//颜色说明
+@property(nonatomic,strong)UIView *setsu;
+//颜色说明文字
+@property(nonatomic,strong)UILabel *setsumoji;
+@property(nonatomic,assign)BOOL arawasu;
+@property(nonatomic,strong)UIButton *commintBtn;
+@property(nonatomic,strong)UIButton *deleateButton;
+@property(nonatomic,strong)UIButton *uploadButton;
+
 @end
 
 @implementation ShenPI
@@ -86,6 +96,8 @@
     UIButton *sureBtn;
     UIButton *backBatn;
     UIView *infoView;
+    //柱状图文字
+    NSArray *_monji;
     CGFloat lastConstant; // 记录最后一次tableView 与底部的距离
 }
 - (instancetype)initWithCoder:(NSCoder *)aDecoder{
@@ -98,7 +110,10 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+  
     //wo
+    NSLog(@"+++%lf,%lf",SCREEN_WIDTH,SCREEN_HEIGHT);
+   
     self.tuihui=NO;
     
     self.selectedIndex = 0;
@@ -117,7 +132,9 @@
     
     [self requestDataSource];
     self.topConstaraint.constant = -188.0f;
+    
     lastConstant = 50.0f;
+   
     if (self.billType == 1) {
         
         textFiledHeight = 0.0f;
@@ -139,19 +156,22 @@
     self.views.view.hidden=YES;
     
     [self addChildViewController:self.views];
+  
     self.contentCz =[[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
+    
+    
     self.contentCz.backgroundColor =[UIColor whiteColor];
 //    [self.view addSubview:self.contentCz];
     self.contentCz.hidden=YES;
     view =[[UIScrollView alloc] initWithFrame:CGRectMake(0, self.contentCz.frame.origin.y,SCREEN_WIDTH, SCREEN_HEIGHT)];
     
-    view.contentSize = CGSizeMake(view.frame.size.width, 1500);
-    
+    view.contentSize = CGSizeMake(self.chart.frame.size.width, 1000);
+    view.userInteractionEnabled=YES;
     view.bounces=YES;
     //饼图的个数
     _Criclearray =[NSMutableArray arrayWithCapacity:10];
     
-    for (int i=0; i< 2; i++) {
+    for (int i=0; i< 3; i++) {
         NSNumber *number = [NSNumber numberWithInt:rand()%60+20];
         [_Criclearray addObject:number];
         
@@ -169,15 +189,71 @@
     
     [self Histogram];
         // Do any additional setup after loading the view.
+    
+    [self gitaihandan];
+    
 }
+-(void)gitaihandan
+{
+    //chisan 报销
+    //shisa 审批
+    //tokei 预算
+    //miseru 流程
+    
+    if (DEVICE_IS_IPHONE5) {
+        self.miserulay.constant = 70;
+     
+        self.lineWide.constant=70;
+        self.misetulead.constant=70;
+    }
+    
+}
+#pragma mark------设置柱状图
 -(void)Histogram
 {
-    self.values = @[@30, @45, @44, @60, @95, @2, @8, @9];
+    
+    
+   //每个季度的数据
+    self.values = @[@23, @45, @44, @0,
+                    @45, @44,@60, @0,
+                    @2, @95,@30, @0,
+                    @44,@60,@60,@0,
+                     @44,@60,@60,@0,
+                     @44,@60,@60,@0,
+                     @44,@60,@60,@0,
+                     @44,@60,@60,@0,
+                     @44,@60,@60,@0,
+                     @44,@60,@60,@0,
+                     @44,@60,@60,@0,
+                     @44,@60,@60,@0,
+                    ];
+   //每个月份
+    _monji =@[@"", @"1", @"",@"",
+              @"", @"2", @"",@"",
+              @"", @"3", @"",@"",
+              @"", @"4", @"",@"",
+              @"", @"5", @"",@"",
+              @"", @"6", @"",@"",
+              @"", @"7", @"",@"",
+              @"", @"8", @"",@"",
+              @"", @"9", @"",@"",
+              @"", @"10", @"",@"",
+              @"", @"11", @"",@"",
+              @"", @"12", @"",@"",
+              ];
+    NSLog(@"%d,%d",self.values.count,_monji.count);
+    
     self.haikei = [NSMutableArray arrayWithCapacity:0];
-    self.haikei = @[[UIColor blueColor], [UIColor redColor], [UIColor blackColor], [UIColor orangeColor], [UIColor purpleColor], [UIColor greenColor]];
-    self.currentbar = 0;
+    self.haikei = @[[UIColor colorWithRed:100/255.0 green:149/255.0 blue:237/255.0 alpha:1],[UIColor colorWithRed:135/255.0 green:206/255.0 blue:250/255.0 alpha:1],[UIColor colorWithRed:255/255.0 green:127/255.0 blue:88/255.0 alpha:1],[UIColor colorWithRed:218/255.0 green:112/255.0 blue:214/255.0 alpha:1]];
+//    self.currentbar = 0;
+   
     CGRect chartFrame				= CGRectMake(10,
-                                                view.frame.size.height-350,320.0,300.0);
+                                                0,1200,340);
+    if (DEVICE_IS_IPHONE5) {
+        chartFrame = CGRectMake(10, 0, 1200, 320);
+        
+    }
+    
     self.chart = [[SimpleBarChart alloc] initWithFrame:chartFrame];
     // self.chart.center = CGPointMake(view.frame.size.width / 2.0, self.);
     
@@ -187,15 +263,98 @@
     self.chart.barShadowOffset = CGSizeMake(2.0, 1.0);
     self.chart.animationDuration =1.0;
     self.chart.barShadowColor = [UIColor blueColor];
-    self.chart.barShadowAlpha = 0.5;
-    self.chart.barShadowRadius = 1.0;
-    self.chart.barWidth= 18.0;
-    self.chart.xLabelType = SimpleBarChartXLabelTypeVerticle;
-    self.chart.incrementValue=10;
-    self.chart.barTextType = SimpleBarChartBarTextTypeTop;
-    self.chart.barTextColor = [UIColor whiteColor];
+    self.chart.barShadowAlpha = 0.1;
+    self.chart.barShadowRadius = 50.0;
+    self.chart.barWidth= 30.0;
+    self.chart.xLabelType = SimpleBarChartXLabelTypeHorizontal;
+    self.chart.xLabelFont = [UIFont systemFontOfSize:14];
+    self.chart.barTextFont=[UIFont systemFontOfSize:18];
+    self.chart.incrementValue=15;
+    
+    
+    self.chart.barTextType = SimpleBarChartBarTextTypeRoof;
+    
     self.chart.gridColor = [UIColor grayColor];
-    [view addSubview:self.chart];
+     [self irotsuke];
+    UIView *roki = [[UIView alloc] initWithFrame:CGRectMake(0, 370, SCREEN_WIDTH, SCREEN_HEIGHT)];
+    roki.backgroundColor =[UIColor clearColor];
+    UIScrollView *suberi =[[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
+//    suberi.backgroundColor =[UIColor blueColor];
+    suberi.contentSize = CGSizeMake(self.chart.frame.size.width, self.chart.frame.size.height);
+    [roki addSubview:suberi];
+    [suberi addSubview:self.chart];
+    [view addSubview:roki];
+  
+    
+}
+-(void)irotsuke
+{
+    
+    
+    
+    //已使用
+    UIView *shiyo =[[UIView alloc] init];
+    
+    shiyo.frame =CGRectMake(20, 316, 42, 21);
+    NSLog(@"%lf",view.frame.size.height-420);
+    shiyo.backgroundColor = [UIColor colorWithRed:100/255.0 green:149/255.0 blue:250/255.0 alpha:1];
+    UILabel *shiyolay =[[UILabel alloc] init];
+    shiyolay.frame = CGRectMake(20,317 , 42, 21);
+    
+    
+    shiyolay.text=@"已使用";
+    shiyolay.font = [UIFont systemFontOfSize:14];
+    [view addSubview:shiyo];
+    [view addSubview:shiyolay];
+    
+    //未使用
+     UIView *mada =[[UIView alloc] initWithFrame:CGRectMake(69, 316, 42, 21)];
+   mada.backgroundColor = [UIColor colorWithRed:135/255.0 green:206/255.0 blue:250/255.0 alpha:1];
+    [view addSubview:mada];
+    
+    UILabel *madalay =[[UILabel alloc] initWithFrame:CGRectMake(69, 317, 42, 21)];
+    
+    madalay.text=@"未使用";
+    madalay.font =[UIFont systemFontOfSize:14];
+    [view addSubview:madalay];
+    
+    //占用
+    UIView *shikichi =[[UIView alloc] initWithFrame:CGRectMake(69+48,316, 42, 21)];
+    shikichi.backgroundColor =[UIColor colorWithRed:255/255.0 green:127/255.0 blue:88/255.0 alpha:1];
+    UILabel *shikichilay =[[UILabel alloc]initWithFrame:CGRectMake(70+47,317 , 42, 21)];
+    shikichilay.text=@"占用";
+    shikichilay.font =[UIFont systemFontOfSize:14];
+    [view addSubview:shikichi];
+    [view addSubview:shikichilay];
+    //全额
+    UIView *subede =[[UIView alloc] initWithFrame:CGRectMake(70+47*2, 316, 42, 21)];
+    subede.backgroundColor =[UIColor colorWithRed:218/255.0 green:112/255.0 blue:214/255.0 alpha:1];
+    [view addSubview:subede];
+    UILabel *subedelay =[[UILabel alloc] initWithFrame:CGRectMake(70+47*2, 317, 42, 21)];
+    subedelay.text=@"全额";
+    subedelay.font = [UIFont systemFontOfSize:14];
+    [view addSubview:subedelay];
+    UILabel *soka =[[UILabel alloc] initWithFrame:CGRectMake(70+47*3, 316, 60, 21)];
+   
+    soka.text = @"=200";
+    soka.font =[UIFont systemFontOfSize:14];
+    [view addSubview:soka];
+    
+    
+    //月
+    UILabel *label =[[UILabel alloc]initWithFrame:CGRectMake(10,710, 14, 10) ];
+    NSLog(@"%lf",(view.frame.size.height-345)+280);
+    label.text=@"月";
+    label.font=[UIFont systemFontOfSize:12];
+    
+    [view addSubview:label];
+    //公司说明
+    UILabel *kaisha =[[UILabel alloc] initWithFrame:CGRectMake(10, 740, SCREEN_WIDTH, 40)];
+    NSLog(@"%f",label.frame.origin.y+40);
+    
+    kaisha.textAlignment = NSTextAlignmentCenter;
+    kaisha.text =@"思凯普2015年年度预算展示图";
+    [view addSubview:kaisha];
     
     
 }
@@ -624,6 +783,7 @@
 #pragma mark - BtnAciton
 
 - (IBAction)changePage:(UIButton *)sender {
+    
     UIView *footerView = [self.view viewWithTag:1024];
     for (UIView *subView in self.topView.subviews) {
         
@@ -634,9 +794,20 @@
                 CGRect frame = self.lineView.frame;
                 [UIView animateWithDuration:0.3 animations:^{
 //                    self.lineLeftConstraint.constant =frame.size.width * (subBtn.tag - 10);
+                    
                      self.lineLeftConstraint.constant =frame.size.width * (subBtn.tag -10);
+//                    if (DEVICE_IS_IPHONE5) {
+//                        
+//                        self.lineLeftConstraint.constant = frame.size.width*subBtn.tag;
+//                    }
                 }];
                 if (sender.tag == 10) {
+                    if (_commintBtn.hidden==YES) {
+                        _commintBtn.hidden=NO;
+                        _deleateButton.hidden=NO;
+                        _uploadButton.hidden=NO;
+                    }
+                   
                     self.selectedIndex = 0;
 //                    if ( self.views.view.hidden==NO) {
 //                        self.views.view.hidden=YES;
@@ -651,13 +822,18 @@
                     NSDictionary *mainDataDic = [_mainData safeObjectAtIndex:0];
                     if (self.billType == 0 &&([[mainDataDic objectForKey:@"flowstatus_show"] isEqualToString:@"未提交"] || [[mainDataDic objectForKey:@"flowstatus_show"] isEqualToString:@"已弃审"] || [[mainDataDic objectForKey:@"flowstatus_show"] isEqualToString:@"已退回"])) {
                         self.tableViewBottomConstraint.constant = 135.0f;
+                      
                     }
                     
                 }
                 else if(sender.tag == 11){
-//                    if ( self.views.view.hidden==NO) {
-//                        self.views.view.hidden=YES;
-//                    }
+                    if (_commintBtn.hidden==YES) {
+                        _commintBtn.hidden=NO;
+                        _deleateButton.hidden=NO;
+                        _uploadButton.hidden=NO;
+                    }
+                    
+                    
                     if (self.contentCz.hidden==NO) {
                         self.contentCz.hidden=YES;
                     }
@@ -669,9 +845,12 @@
                     self.tableViewBottomConstraint.constant = 0;
                 }
                 else if (sender.tag == 12){
-//                    if ( self.views.view.hidden==NO) {
-//                        self.views.view.hidden=YES;
-//                    }
+                    if (_commintBtn.hidden==YES) {
+                        _commintBtn.hidden=NO;
+                        _deleateButton.hidden=NO;
+                        _uploadButton.hidden=NO;
+                    }
+                   
                     if (self.contentCz.hidden==NO) {
                         self.contentCz.hidden=YES;
                     }
@@ -684,6 +863,14 @@
                 }
                 
                 else if (sender.tag == 13){
+                    if (_commintBtn.hidden==NO) {
+                        _commintBtn.hidden=YES;
+                        _uploadButton.hidden=YES;
+                        _deleateButton.hidden=YES;
+                    }
+                    
+                    
+                    
                     self.selectedIndex=3;
 //                    if ( self.views.view.hidden==YES) {
 //                        self.views.view.hidden=NO;
@@ -696,6 +883,8 @@
                     if (self.contentCz.hidden==YES) {
                         self.contentCz.hidden=NO;
                     }
+             
+                    
                       footerView.hidden = YES;
                     self.tableViewBottomConstraint.constant = 0;
                 }
@@ -855,8 +1044,9 @@
                 [bgView removeFromSuperview];
                 [self addItems:bgView];
                 [cell.contentView addSubview:bgView];
+                 self.tableViewBottomConstraint.constant =100;
             }
-            
+           
             return cell;
             
         }
@@ -938,7 +1128,7 @@
             [self.MaRu reloadData];
             [self.chart reloadData];
             [self.contentCz addSubview:view];
-            
+            [self gitaihandan];
             [cell.contentView addSubview:self.contentCz];
             
             return cell;
@@ -964,9 +1154,36 @@
     self.MaRu.animationSpeed =1.0;
    
     self.MaRu.showPercentage= YES;
-    self.Criclecolour = [NSArray arrayWithObjects:
-                         [UIColor colorWithRed:123/255.0 green:155/255.0 blue:0/255.0 alpha:1],
-                         [UIColor colorWithRed:69/255.0 green:98/255.0 blue:166/255.0 alpha:1],nil];
+    
+//    self.Criclecolour = [NSArray arrayWithObjects:
+//                         [UIColor colorWithRed:123/255.0 green:155/255.0 blue:0/255.0 alpha:1],
+//                         [UIColor colorWithRed:69/255.0 green:98/255.0 blue:166/255.0 alpha:1],nil];
+    self.Criclecolour=[NSArray arrayWithObjects:[UIColor colorWithRed:100/255.0 green:149/255.0 blue:237/255.0 alpha:1],[UIColor colorWithRed:135/255.0 green:206/255.0 blue:250/255.0 alpha:1],[UIColor colorWithRed:255/255.0 green:127/255.0 blue:88/255.0 alpha:1],nil];
+    self.setsu = [[UIView alloc] initWithFrame:CGRectMake(15, 108, 42, 21)];
+    self.setsu.backgroundColor =[UIColor colorWithRed:100/255.0 green:149/255.0 blue:237/255.0 alpha:1];
+    [view addSubview:self.setsu];
+    self.setsumoji = [[UILabel alloc] initWithFrame:CGRectMake(15, 109, 42, 21)];
+    self.setsumoji.text=@"未使用";
+    self.setsumoji.font =[UIFont systemFontOfSize:14];
+    UIView *shiyo = [[UIView alloc] initWithFrame:CGRectMake(15, 131, 42, 21)];
+    [view addSubview:shiyo];
+    UILabel *shitsu =[[UILabel alloc] initWithFrame:CGRectMake(15, 132, 42, 21)];
+    shitsu.text=@"已使用";
+    shitsu.backgroundColor = [UIColor colorWithRed:135/255.0 green:206/255.0 blue:250/255.0 alpha:1];
+    shitsu.font = [UIFont systemFontOfSize:14];
+    UIView *shikichi =[[UILabel alloc] initWithFrame:CGRectMake(15, 132+24, 42, 21)];
+    shikichi.backgroundColor =[UIColor colorWithRed:255/255.0 green:127/255.0 blue:88/255.0 alpha:1];
+    [view addSubview:shikichi];
+    UILabel *shikichilay =[[UILabel alloc]initWithFrame:CGRectMake(15,132+26 , 42, 21)];
+    shikichilay.text=@"占用";
+    shikichilay.font =[UIFont systemFontOfSize:14];
+  
+    [view addSubview:shitsu];
+    [view addSubview:shikichilay];
+    [view addSubview:self.setsumoji];
+    
+    
+    
      [view addSubview:self.MaRu];
     
     
@@ -1049,39 +1266,47 @@
 
 // 是否显示提交按钮
 - (void)addCommintBtn{
+    
+    
     NSDictionary *mainDataDic = [_mainData safeObjectAtIndex:0];
     if (self.billType == 0 && ([[mainDataDic objectForKey:@"flowstatus_show"] isEqualToString:@"未提交"] ||[[mainDataDic objectForKey:@"flowstatus_show"] isEqualToString:@"已弃审"] || [[mainDataDic objectForKey:@"flowstatus_show"] isEqualToString:@"已退回"])) {
         
-        UIButton *commintBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        [commintBtn setBackgroundColor:[UIColor colorWithRed:0.906 green:0.251 blue:0.357 alpha:1.000]];
-        [commintBtn setTitle:@"提 交" forState:UIControlStateNormal];
-        [commintBtn.titleLabel setFont:[UIFont boldSystemFontOfSize:14]];
-        [commintBtn addTarget:self action:@selector(commintInfo) forControlEvents:UIControlEventTouchUpInside];
-        [commintBtn setFrame:CGRectMake(10, SCREEN_HEIGHT - 80, SCREEN_WIDTH - 20, 30)];
-        [self.view addSubview:commintBtn];
+        _commintBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_commintBtn setBackgroundColor:[UIColor colorWithRed:0.906 green:0.251 blue:0.357 alpha:1.000]];
+        [_commintBtn setTitle:@"提 交" forState:UIControlStateNormal];
+        [_commintBtn.titleLabel setFont:[UIFont boldSystemFontOfSize:14]];
+        [_commintBtn addTarget:self action:@selector(commintInfo) forControlEvents:UIControlEventTouchUpInside];
+        [_commintBtn setFrame:CGRectMake(10, SCREEN_HEIGHT - 80, SCREEN_WIDTH - 20, 30)];
+        [self.view addSubview:_commintBtn];
         
-        UIButton *deleateButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [deleateButton setBackgroundColor:[UIColor colorWithRed:0.906 green:0.251 blue:0.357 alpha:1.000]];
-        [deleateButton setTitle:@"删 除" forState:UIControlStateNormal];
-        [deleateButton.titleLabel setFont:[UIFont boldSystemFontOfSize:14]];
-        [deleateButton addTarget:self action:@selector(deleateOrder) forControlEvents:UIControlEventTouchUpInside];
-        [deleateButton setFrame:CGRectMake(10, SCREEN_HEIGHT - 40, SCREEN_WIDTH - 20, 30)];
-        [self.view addSubview:deleateButton];
+        _deleateButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_deleateButton setBackgroundColor:[UIColor colorWithRed:0.906 green:0.251 blue:0.357 alpha:1.000]];
+        [_deleateButton setTitle:@"删 除" forState:UIControlStateNormal];
+        [_deleateButton.titleLabel setFont:[UIFont boldSystemFontOfSize:14]];
+        [_deleateButton addTarget:self action:@selector(deleateOrder) forControlEvents:UIControlEventTouchUpInside];
+        [_deleateButton setFrame:CGRectMake(10, SCREEN_HEIGHT - 40, SCREEN_WIDTH - 20, 30)];
+        [self.view addSubview:_deleateButton];
         
-        UIButton *uploadButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [uploadButton setBackgroundColor:[UIColor colorWithRed:0.906 green:0.251 blue:0.357 alpha:1.000]];
-        [uploadButton setTitle:@"上 传" forState:UIControlStateNormal];
-        [uploadButton.titleLabel setFont:[UIFont boldSystemFontOfSize:14]];
-        [uploadButton addTarget:self action:@selector(uploadClick:) forControlEvents:UIControlEventTouchUpInside];
-        [uploadButton setFrame:CGRectMake(10, SCREEN_HEIGHT - 120, SCREEN_WIDTH - 20, 30)];
-        [self.view addSubview:uploadButton];
+        _uploadButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_uploadButton setBackgroundColor:[UIColor colorWithRed:0.906 green:0.251 blue:0.357 alpha:1.000]];
+        [_uploadButton setTitle:@"上 传" forState:UIControlStateNormal];
+        [_uploadButton.titleLabel setFont:[UIFont boldSystemFontOfSize:14]];
+        [_uploadButton addTarget:self action:@selector(uploadClick:) forControlEvents:UIControlEventTouchUpInside];
+        [_uploadButton setFrame:CGRectMake(10, SCREEN_HEIGHT - 120, SCREEN_WIDTH - 20, 30)];
+        [self.view addSubview:_uploadButton];
         UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithTitle:@"编辑" style:UIBarButtonItemStylePlain target:self action:@selector(buttontap)];
+        
+        
         [item setTintColor:[UIColor whiteColor]];
+        
         
         self.navigationItem.rightBarButtonItem=item;
         self.tableViewBottomConstraint.constant = 135.0f;
         lastConstant = 135.0f;
+       
     }
+   
+        
     if (self.billType==0&&[[mainDataDic objectForKey:@"flowstatus_show"]isEqualToString:@"已提交"]) {
         
         
@@ -1104,6 +1329,7 @@
         lastConstant = 50.0f;
         
     }
+   
     
 }
 -(void)aller
@@ -1669,7 +1895,7 @@
     //
     
     //    }
-   
+    
     
     return [self.Criclecolour objectAtIndex:(index%self.Criclecolour.count)];
     
@@ -1688,22 +1914,57 @@
 }
 -(CGFloat)barChart:(SimpleBarChart *)barChart valueForBarAtIndex:(NSUInteger)index
 {
-    return [[self.values objectAtIndex:index] floatValue];
+    
+    return [[self.values objectAtIndex:index]floatValue] ;
     
 }
 -(NSString *)barChart:(SimpleBarChart *)barChart textForBarAtIndex:(NSUInteger)index
 {
+    if (index%4==3) {
+        barChart.barTextColor = [UIColor clearColor];
+        
+    }
+//        else{
+//        barChart.barTextColor =[UIColor blackColor];
+//    }
+    
     return [[self.values objectAtIndex:index] stringValue];
     
 }
 -(NSString *)barChart:(SimpleBarChart *)barChart xLabelForBarAtIndex:(NSUInteger)index
 {
-    return [[self.values objectAtIndex:index] stringValue];
+    return [_monji objectAtIndex:index];
 }
 -(UIColor *)barChart:(SimpleBarChart *)barChart colorForBarAtIndex:(NSUInteger)index
 {
-    return [self.haikei objectAtIndex:self.currentbar];
+    if (index%4 == 0) {
+        index = 0;
+        
+        self.chart.barWidth=27;
+        
+    }
+    if (index%4 ==1) {
+        index=1;
+       
+    }
+    if (index%4==2) {
+        index=2;
+       
+    }
+    if (index%4==3) {
+        index=1;
+      // barChart.barTextColor =[UIColor clearColor];
+        self.chart.barWidth=0;
+    }
+    
+    
+    
+    
+  
+    return [self.haikei objectAtIndex:index];
+    
 }
+
 /*
 #pragma mark - Navigation
 

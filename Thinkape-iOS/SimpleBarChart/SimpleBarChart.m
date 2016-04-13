@@ -46,7 +46,7 @@ dataSource	= _dataSource;
 	self.animationDuration	= 1.0;
 	self.hasGrids			= YES;
 	self.incrementValue		= 10.0;
-	self.barWidth			= 20.0;
+	self.barWidth			= 36.0;
 	self.barAlpha			= 1.0;
 	self.chartBorderColor	= [UIColor blackColor];
 	self.gridColor			= [UIColor grayColor];
@@ -212,7 +212,7 @@ dataSource	= _dataSource;
 	_borderPathLayer.path				= path.CGPath;
 	_borderPathLayer.strokeColor		= self.chartBorderColor.CGColor;
 	_borderPathLayer.fillColor			= nil;
-	_borderPathLayer.lineWidth			= 1.0f;
+	_borderPathLayer.lineWidth			= 1.0;
 	_borderPathLayer.lineJoin			= kCALineJoinBevel;
 
 	[_borderLayer addSublayer:_borderPathLayer];
@@ -247,13 +247,13 @@ dataSource	= _dataSource;
 	[_barPathLayers removeAllObjects];
 
 	CGFloat barHeightRatio	= _barLayer.bounds.size.height / _topValue;
-	CGFloat	xPos			= _barLayer.bounds.size.width / (_numberOfBars + 1);
-	
+//	CGFloat	xPos			= _barLayer.bounds.size.width / (_numberOfBars + 1);
+CGFloat	xPos			= _barLayer.bounds.size.width / (_numberOfBars+1);
 	for (NSInteger i = 0; i < _numberOfBars; i++)
 	{
 		CGPoint bottom					= CGPointMake(xPos, _barLayer.bounds.origin.y);
 		CGPoint top						= CGPointMake(xPos, ((NSNumber *)[_barHeights objectAtIndex:i]).floatValue * barHeightRatio);
-		xPos							+= _barLayer.bounds.size.width / (_numberOfBars + 1);
+		xPos							+= _barLayer.bounds.size.width / (_numberOfBars+1 );
 
 		UIBezierPath *path				= [UIBezierPath bezierPath];
 		[path moveToPoint:bottom];
@@ -261,8 +261,8 @@ dataSource	= _dataSource;
 
 		UIColor *barColor				= [UIColor darkGrayColor];
 		if (_dataSource && [_dataSource respondsToSelector:@selector(barChart:colorForBarAtIndex:)])
-			barColor = [_dataSource barChart:self colorForBarAtIndex:i];
 
+            barColor = [_dataSource barChart:self colorForBarAtIndex:i];
 		CAShapeLayer *barPathLayer		= [CAShapeLayer layer];
 		barPathLayer.frame				= _barLayer.bounds;
 		barPathLayer.bounds				= _barLayer.bounds;
@@ -508,7 +508,7 @@ dataSource	= _dataSource;
 		[[_barTextView subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
 	}
 
-	CGFloat	xPos				= _barLayer.bounds.size.width / (_numberOfBars + 1);
+	CGFloat	xPos				= _barLayer.bounds.size.width / (_numberOfBars+1 );
 
 	for (NSInteger i = 0; i < _numberOfBars; i++)
 	{
@@ -549,7 +549,8 @@ dataSource	= _dataSource;
 
 		[_barTextView addSubview:barText];
 
-		xPos += _barLayer.bounds.size.width / (_numberOfBars + 1);
+		xPos += _barLayer.bounds.size.width / (_numberOfBars+1);
+       
 	}
 }
 

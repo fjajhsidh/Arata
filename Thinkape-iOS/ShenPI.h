@@ -21,5 +21,17 @@
 @property (nonatomic,strong) UnApprovalModel *unModel;
 @property (nonatomic,copy) void (^reloadData)();
 @property(nonatomic,assign)int selectedion2;
+//5s适配
+//审批
+@property (weak, nonatomic) IBOutlet UIButton *miseru;
+@property (weak, nonatomic) IBOutlet UIButton *chisan;
+@property (weak, nonatomic) IBOutlet UIButton *shisa;
+@property (weak, nonatomic) IBOutlet UIButton *tokei;
+//重新定义约束
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *miserulay;
+//line长度
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *lineWide;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *misetulead;
+
 
 @end

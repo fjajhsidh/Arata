@@ -37,7 +37,9 @@
 #import "MiXimodel.h"
 #import "BillsListViewController.h"
 #import "IQKeyboardManager.h"
+#import "ShenPI.h"
 #import "AppDelegate.h"
+#import "StayApprovalViewController.h"
 @interface BianJiViewController ()<UITableViewDataSource,UITableViewDelegate,SDPhotoBrowserDelegate,QLPreviewControllerDataSource,UIAlertViewDelegate,UINavigationControllerDelegate, UIImagePickerControllerDelegate,CTAssetsPickerControllerDelegate,UIActionSheetDelegate,KindsItemsViewDelegate,UITextFieldDelegate>
 @property (weak, nonatomic) IBOutlet UITableView *tableview;
 
@@ -234,11 +236,25 @@
 -(void)pulltoreturn
 {
     [self.textfield resignFirstResponder];
+   
+    BillsListViewController *bi =[self.storyboard instantiateViewControllerWithIdentifier:@"BillsListView"];
+    
     NSArray *temArray =self.navigationController.viewControllers;
+    
+    
     for (UIViewController *ter in temArray) {
+       
         if ([ter isKindOfClass:[BillsListViewController class]]) {
-            [self.navigationController popToViewController:ter animated:YES];
+            
+            
+                        [self.navigationController popToViewController:ter animated:YES];
+           
         }
+        if ([ter isKindOfClass:[StayApprovalViewController class]]) {
+            [self.navigationController popToViewController:ter animated:YES];
+            
+        }
+    
     }
     
 }

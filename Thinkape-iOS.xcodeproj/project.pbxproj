@@ -21,8 +21,8 @@
 		1F6D8D021C3B707D00496AF1 /* ab_nav_bg.png in Resources */ = {isa = PBXBuildFile; fileRef = 1F6D8D011C3B707D00496AF1 /* ab_nav_bg.png */; };
 		1F78343D1C2923D300DDD1B5 /* BianjiTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F78343B1C2923D300DDD1B5 /* BianjiTableViewCell.m */; };
 		1F8D55811CB756AE00D6F704 /* SimpleBarChart.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F8D55801CB756AE00D6F704 /* SimpleBarChart.m */; };
-		1F8D558C1CB776C700D6F704 /* ShenPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F8D558A1CB776C700D6F704 /* ShenPI.m */; };
 		1F8E86FA1C586FE400A60D68 /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F8E86F91C586FE400A60D68 /* Photos.framework */; };
+		1F92968A1CBB97B10028DFD6 /* ShenPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F8D558A1CB776C700D6F704 /* ShenPI.m */; };
 		1FA0E46E1CB5F5B1004149F4 /* XYPieChart.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA0E46D1CB5F5B1004149F4 /* XYPieChart.m */; };
 		1FA0E4721CB60C54004149F4 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FA0E4701CB60C54004149F4 /* ViewController.m */; };
 		1FA0E4731CB60C54004149F4 /* ViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1FA0E4711CB60C54004149F4 /* ViewController.xib */; };
@@ -1162,7 +1162,7 @@
 				4ED449381AEA32160047614F /* PFAdView.m in Sources */,
 				6A4B6E951C074F0300663B7E /* AboutViewController.m in Sources */,
 				1FA0E4721CB60C54004149F4 /* ViewController.m in Sources */,
-				1F8D558C1CB776C700D6F704 /* ShenPI.m in Sources */,
+				1F92968A1CBB97B10028DFD6 /* ShenPI.m in Sources */,
 				1FC06BCE1C4DD4EA0076B4AB /* MiXimodel.m in Sources */,
 				4E1DB0EE1B253D9500333940 /* BillsLayoutViewCell.m in Sources */,
 				1FCA1AB91C7564E900B92A25 /* Disembark.m in Sources */,
