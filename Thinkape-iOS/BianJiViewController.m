@@ -258,6 +258,7 @@
     }
     
 }
+#pragma mark----请求数据
 - (void)requestDataSource{
     
     //ac=GetEditData&u=9&programid=130102&billid=28
@@ -507,6 +508,7 @@
     return cell;
     
 }
+//解析特批原因（xml）字符串
 -(NSString *)filterHTML:(NSString *)str
 {
     NSScanner * scanner = [NSScanner scannerWithString:str];
@@ -1260,7 +1262,7 @@
 - (id <QLPreviewItem>)previewController:(QLPreviewController *)controller previewItemAtIndex:(NSInteger)index{
     return [NSURL fileURLWithPath:[[RequestCenter defaultCenter] filePath]];
 }
-//金额数字
+#pragma mark----金额数据
 - (UIScrollView *)costScrollView
 {
     
@@ -1324,7 +1326,7 @@
     return scroll;
 }
 //
-
+#pragma mark---跳转明细界面
 -(void)costDetails:(UIButton *)btn
 {
    
@@ -1494,7 +1496,7 @@
   
    
 }
-
+#pragma mark----保存取消按钮的位置
 -(void)addFooterView
 {
     infoView = [[UIView alloc] initWithFrame:CGRectMake(10, SCREEN_HEIGHT - 50 - textFiledHeight, SCREEN_WIDTH - 20, 50 + textFiledHeight)];

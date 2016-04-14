@@ -217,7 +217,7 @@
     
     bi.changeIndex = _btnIndex;
     
-    
+    //金额
     double number = [[bi.oldDicts objectForKey:@"billmoney"] doubleValue] - [ _preMoney doubleValue ] + [_oldMoney doubleValue] ;
   
     bi.changeMoney = [NSString stringWithFormat:@"%.2lf",number];
@@ -245,6 +245,7 @@
     
     
 }
+#pragma mark----cell重用
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     MiXimodel *layoutModel =[self.coster.fileds

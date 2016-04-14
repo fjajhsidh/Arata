@@ -54,9 +54,11 @@
     speace = 20;
     
     _moneyArray = [[NSMutableArray alloc]init];
-    
+    //右边导航按钮
     [self addRightNavgation];
+    
     [self itemLength];
+    //右下角按钮
     [self layoutScroll];
     self.scrollview.bounces=NO;
     self.navigationController.navigationBarHidden=NO;
@@ -76,6 +78,7 @@
     self.navigationItem.rightBarButtonItem=item;
     
 }
+#pragma mark---完成按钮
 -(void)addLeftNavgation
 {
     UIButton *leftButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 45, 45)];
@@ -125,9 +128,10 @@
     [self.navigationController popToViewController:bianji animated:YES];
    
 }
-
+#pragma mark---新增明细表跳转
 -(void)appcer
 {
+    
     Bianjiviewtableview *vc =[Bianjiviewtableview new];
     vc.indexto = _index;
     vc.costArray=self.costLayoutArray;
@@ -187,15 +191,17 @@
 
 #pragma mark -- tabelViewDelegate
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    //新增单元格的数据
     NSArray *array = [_costDataArr safeObjectAtIndex:_index ];
     
     return array.count + 2;
 }
 
-
+#pragma mark-----taleview代理方法
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-    
+    //冲账，报销字符
     CostLayoutModel *model = [self.costLayoutArray safeObjectAtIndex:_index];
+    
     NSString *cellid = @"cell";
     UITableViewCell *cell = (UITableViewCell *)[tableView dequeueReusableCellWithIdentifier:cellid];
     if (!cell) {
@@ -216,6 +222,7 @@
         
         UILabel *title = [[UILabel alloc] initWithFrame:CGRectMake(13, 14, width, 15)];
         title.font = [UIFont systemFontOfSize:15];
+        //冲账，报销字符
         title.text = model.name;
         title.textColor = [UIColor whiteColor];
         
@@ -310,8 +317,10 @@
     return cell;
     
 }
+#pragma mark---点击tableviewcell
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    //第一行不能被点击
     if (indexPath.row==1||indexPath.row==0) {
         NSIndexPath *PATH =[self.tableview indexPathForSelectedRow];
         UITableViewCell *cell = [self.tableview cellForRowAtIndexPath:PATH];
@@ -334,6 +343,7 @@
    
     //cell的行数
     app.indexcor = _indexRow;
+    //把字典数据展示到tableive上
     if (indexPath.row==_indexRow) {
         _datar = [_dataArr safeObjectAtIndex:indexPath.row-2];
         app.dict =_datar;
@@ -361,7 +371,7 @@
     
     
     
-    
+    //传删除的id的
     if ([self.dilct allKeys].count>0) {
          vc.dictarry = self.dilct;
     }
@@ -371,7 +381,7 @@
 }
 
 
-
+#pragma mark-----删除单元格的方法
 -(void)buttonaction:(UIButton *)sender
 {
     AppDelegate *app =(AppDelegate *)[UIApplication sharedApplication].delegate;
@@ -388,7 +398,7 @@
     //点击的那个字典需要取id
     NSMutableDictionary *deleteDic =[aler safeObjectAtIndex:self.iscellindes];
     CostLayoutModel *model = [self.costLayoutArray safeObjectAtIndex:_index];
- 
+    //保存删除的id
     if([deleteDic objectForKey:@"billdetailid"]!=nil && ![[deleteDic objectForKey:@"billdetailid"] isEqualToString:@""]){
         if([self.dilct objectForKey:model.gridmainid]!=nil && ![[self.dilct objectForKey:model.gridmainid] isEqualToString:@""]){
             NSString *v = [self.dilct objectForKey:model.gridmainid];
@@ -415,7 +425,7 @@
 
 }
 
-
+#pragma mark----tableview高度
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     if (indexPath.row == 0) {
         return 47.0f;
