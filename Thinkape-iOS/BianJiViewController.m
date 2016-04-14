@@ -205,7 +205,7 @@
     
     
 }
-//添加借款冲销
+#pragma mark---添加借款冲销方法
 -(void)addKaRi
 {
     UIButton *iconb =[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 80, 40)];
@@ -216,6 +216,7 @@
     UIBarButtonItem *back =[[UIBarButtonItem alloc] initWithCustomView:iconb];
     self.navigationItem.rightBarButtonItem=back;
 }
+//借款冲销方法
 -(void)dereto
 {
     
