@@ -186,6 +186,9 @@
     }
     
     [self requestDataSource];
+    if ([self.programeId containsString:@"13"]) {
+        [self addKaRi];
+    }
     textFiledHeight=0;
     
     [self addFooterView];
@@ -195,11 +198,26 @@
     self.deledict =[NSMutableDictionary dictionary];
   //键盘的弹出和隐藏
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardShows:) name:UIKeyboardWillChangeFrameNotification object:nil];
-//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardHidens:) name:UIKeyboardWillHideNotification object:nil];
+
     
     self.view.backgroundColor =[UIColor clearColor];
     self.view.window.backgroundColor =[UIColor clearColor];
     
+    
+}
+//添加借款冲销
+-(void)addKaRi
+{
+    UIButton *iconb =[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 80, 40)];
+    [iconb setTitle:@"借款冲销" forState:UIControlStateNormal];
+    iconb.titleLabel.font = [UIFont systemFontOfSize:16];
+    [iconb addTarget:self action:@selector(dereto) forControlEvents:UIControlEventTouchUpInside];
+    
+    UIBarButtonItem *back =[[UIBarButtonItem alloc] initWithCustomView:iconb];
+    self.navigationItem.rightBarButtonItem=back;
+}
+-(void)dereto
+{
     
 }
 //键盘弹出
@@ -237,7 +255,7 @@
 {
     [self.textfield resignFirstResponder];
    
-    BillsListViewController *bi =[self.storyboard instantiateViewControllerWithIdentifier:@"BillsListView"];
+   
     
     NSArray *temArray =self.navigationController.viewControllers;
     
@@ -258,7 +276,7 @@
     }
     
 }
-#pragma mark----请求数据
+#pragma mark----请求数据获取
 - (void)requestDataSource{
     
     //ac=GetEditData&u=9&programid=130102&billid=28
@@ -1329,7 +1347,7 @@
 #pragma mark---跳转明细界面
 -(void)costDetails:(UIButton *)btn
 {
-   
+    
     [self.textfield resignFirstResponder];
     Bianjito *vc = [[Bianjito alloc] init];
     AppDelegate *app = (AppDelegate *)[UIApplication sharedApplication].delegate;
@@ -1350,6 +1368,7 @@
     CostLayoutModel *model = [_costLayoutArray2 safeObjectAtIndex:btn.tag];
     
     vc.oldMoney = model.TotalMoney;
+    
     
     [self.navigationController pushViewController:vc animated:YES];
 

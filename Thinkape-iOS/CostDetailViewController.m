@@ -149,6 +149,9 @@
 - (void)itemLength{
     if (self.selecter==0) {
         CostLayoutModel *model = [self.costLayoutArray safeObjectAtIndex:_index];
+        if ([model.name containsString:@"冲账"]) {
+            self.navigationItem.leftBarButtonItem=nil;
+        }
         width = (itemWidth + speace) * model.fileds.count + 40 + speace;
         self.tableViewWidth.constant = width + 24;
     }

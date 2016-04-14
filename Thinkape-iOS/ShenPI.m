@@ -1807,6 +1807,7 @@
     vc.costDataArr = _costData;
     vc.selecter=_selectedion2;
     vc.index = btn.tag;
+    
     [self.navigationController pushViewController:vc animated:YES];
     
     

@@ -26,8 +26,10 @@
 @property(nonatomic,strong) NSMutableArray *asdc;
 @property(nonatomic,assign)BOOL isDElegate;
 @property (nonatomic,strong) NSMutableArray *moneyArray;
-
-
+//加号跳转
+@property(nonatomic,strong)UIBarButtonItem *item;
+//冲账为1，其他为0
+@property(nonatomic,assign)int suji;
 @end
 
 @implementation Bianjito
@@ -64,18 +66,24 @@
     self.navigationController.navigationBarHidden=NO;
     AppDelegate *app = (AppDelegate *)[UIApplication sharedApplication].delegate;
     app.indexpage = _index;
-    
-    [self addLeftNavgation];
-    
+     CostLayoutModel *model = [self.costLayoutArray safeObjectAtIndex:_index];
+     [self addLeftNavgation];
+   //冲账时把右边的导航按钮置为空
+    self.navigationItem.rightBarButtonItem=_item;
+    if ([model.name containsString:@"冲账"]) {
+        self.navigationItem.rightBarButtonItem=nil;
+    }
+
+   
 }
 -(void)addRightNavgation{
     UIButton *imageview = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
     [imageview setBackgroundImage:[UIImage imageNamed:@"jiaban_white.png"] forState:UIControlStateNormal];
     
     [imageview addTarget:self action:@selector(appcer) forControlEvents:UIControlEventTouchUpInside];
-    UIBarButtonItem *item =[[UIBarButtonItem alloc] initWithCustomView:imageview];
+   _item =[[UIBarButtonItem alloc] initWithCustomView:imageview];
     
-    self.navigationItem.rightBarButtonItem=item;
+   
     
 }
 #pragma mark---完成按钮
@@ -152,7 +160,7 @@
 }
 //wo左下角的按钮
 - (void)layoutScroll{
-    
+   
     UIScrollView  *bottomScroll = [[UIScrollView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT - 80, SCREEN_WIDTH, 80)];
     for (int i = 0; i < _costLayoutArray.count; i++) {
         CostLayoutModel *model = [_costLayoutArray safeObjectAtIndex:i];
@@ -180,6 +188,23 @@
     _index = btn.tag;
     
     [self itemLength];
+    CostLayoutModel *model = [self.costLayoutArray safeObjectAtIndex:_index];
+    //冲账为1其他为0
+    if ([model.name containsString:@"冲账"]) {
+        _suji=1;
+    }else
+    {
+        _suji=0;
+    }
+    if (_suji==0) {
+        self.navigationItem.rightBarButtonItem=_item;
+    }
+    if (_suji==1) {
+        self.navigationItem.rightBarButtonItem=nil;
+    }
+   
+  
+    
     [self.tableview reloadData];
     
 }
@@ -224,6 +249,7 @@
         title.font = [UIFont systemFontOfSize:15];
         //冲账，报销字符
         title.text = model.name;
+        
         title.textColor = [UIColor whiteColor];
         
         [bgView addSubview:title];
