@@ -259,6 +259,7 @@
     SubmitApproveViewController *subvc = [self.storyboard instantiateViewControllerWithIdentifier:@"EditCGVC"];
     subvc.type = 1;
     subvc.editModel = [self.dataArray safeObjectAtIndex:indexPath.row];
+ 
     subvc.callback = ^(){
         [self.tableView.header beginRefreshing];
     };

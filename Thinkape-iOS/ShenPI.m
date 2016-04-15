@@ -793,13 +793,10 @@
                 subBtn.selected = YES;
                 CGRect frame = self.lineView.frame;
                 [UIView animateWithDuration:0.3 animations:^{
-//                    self.lineLeftConstraint.constant =frame.size.width * (subBtn.tag - 10);
+
                     
                      self.lineLeftConstraint.constant =frame.size.width * (subBtn.tag -10);
-//                    if (DEVICE_IS_IPHONE5) {
-//                        
-//                        self.lineLeftConstraint.constant = frame.size.width*subBtn.tag;
-//                    }
+
                 }];
                 if (sender.tag == 10) {
                     if (_commintBtn.hidden==YES) {
@@ -809,21 +806,25 @@
                     }
                    
                     self.selectedIndex = 0;
-//                    if ( self.views.view.hidden==NO) {
-//                        self.views.view.hidden=YES;
-//                    }
+
                     if (self.contentCz.hidden==NO) {
                         self.contentCz.hidden=YES;
                     }
                     footerView.hidden = NO;
+                      NSDictionary *mainDataDic = [_mainData safeObjectAtIndex:0];
                     if (self.billType == 1) {
+                        
                         self.tableViewBottomConstraint.constant = lastConstant;
                     }
-                    NSDictionary *mainDataDic = [_mainData safeObjectAtIndex:0];
-                    if (self.billType == 0 &&([[mainDataDic objectForKey:@"flowstatus_show"] isEqualToString:@"未提交"] || [[mainDataDic objectForKey:@"flowstatus_show"] isEqualToString:@"已弃审"] || [[mainDataDic objectForKey:@"flowstatus_show"] isEqualToString:@"已退回"])) {
+                  
+                   else if (self.billType == 0 &&([[mainDataDic objectForKey:@"flowstatus_show"] isEqualToString:@"未提交"] || [[mainDataDic objectForKey:@"flowstatus_show"] isEqualToString:@"已弃审"] || [[mainDataDic objectForKey:@"flowstatus_show"] isEqualToString:@"已退回"])) {
                         self.tableViewBottomConstraint.constant = 135.0f;
                       
+                    }else
+                    {
+                        self.tableViewBottomConstraint.constant=0;
                     }
+                    
                     
                 }
                 else if(sender.tag == 11){
@@ -842,7 +843,7 @@
                         [self requestHistory];
                     }
                     footerView.hidden = YES;
-                    self.tableViewBottomConstraint.constant = 0;
+                    self.tableViewBottomConstraint.constant = 135;
                 }
                 else if (sender.tag == 12){
                     if (_commintBtn.hidden==YES) {
@@ -1294,13 +1295,7 @@
         [_uploadButton addTarget:self action:@selector(uploadClick:) forControlEvents:UIControlEventTouchUpInside];
         [_uploadButton setFrame:CGRectMake(10, SCREEN_HEIGHT - 120, SCREEN_WIDTH - 20, 30)];
         [self.view addSubview:_uploadButton];
-        UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithTitle:@"编辑" style:UIBarButtonItemStylePlain target:self action:@selector(buttontap)];
-        
-        
-        [item setTintColor:[UIColor whiteColor]];
-        
-        
-        self.navigationItem.rightBarButtonItem=item;
+
         self.tableViewBottomConstraint.constant = 135.0f;
         lastConstant = 135.0f;
        

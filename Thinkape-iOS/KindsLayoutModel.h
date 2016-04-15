@@ -30,5 +30,6 @@
 @property(nonatomic,copy)NSString *Field;
 @property (nonatomic , assign) BOOL IsMust;
 @property (nonatomic , assign) BOOL IsSingle;
-
+@property (nonatomic,assign)NSInteger index;
+@property (nonatomic,strong)NSIndexPath *indexPath;
 @end

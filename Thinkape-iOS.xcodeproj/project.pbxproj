@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1F20DC5A1CBF7EE4006E04F6 /* BorrowModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F20DC561CBF7EE4006E04F6 /* BorrowModel.m */; };
+		1F20DC5B1CBF7EE4006E04F6 /* BorrowView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F20DC581CBF7EE4006E04F6 /* BorrowView.m */; };
+		1F20DC5C1CBF7EE4006E04F6 /* BorrowView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1F20DC591CBF7EE4006E04F6 /* BorrowView.xib */; };
 		1F4F63651C2A8BE400EB1CD1 /* BianJiViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F4F63631C2A8BE400EB1CD1 /* BianJiViewController.m */; };
 		1F4F63661C2A8BE400EB1CD1 /* BianJiViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1F4F63641C2A8BE400EB1CD1 /* BianJiViewController.xib */; };
 		1F54CB031C3648C7009A642C /* Bianjiviewtableview.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F54CB011C3648C7009A642C /* Bianjiviewtableview.m */; };
@@ -141,6 +144,11 @@
 
 /* Begin PBXFileReference section */
 		0E5A0EB7F1FD0FF746163FB9 /* Pods.ad hoc distribution.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods.ad hoc distribution.xcconfig"; path = "Pods/Target Support Files/Pods/Pods.ad hoc distribution.xcconfig"; sourceTree = "<group>"; };
+		1F20DC551CBF7EE4006E04F6 /* BorrowModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BorrowModel.h; sourceTree = "<group>"; };
+		1F20DC561CBF7EE4006E04F6 /* BorrowModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BorrowModel.m; sourceTree = "<group>"; };
+		1F20DC571CBF7EE4006E04F6 /* BorrowView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BorrowView.h; sourceTree = "<group>"; };
+		1F20DC581CBF7EE4006E04F6 /* BorrowView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BorrowView.m; sourceTree = "<group>"; };
+		1F20DC591CBF7EE4006E04F6 /* BorrowView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BorrowView.xib; sourceTree = "<group>"; };
 		1F4F63621C2A8BE400EB1CD1 /* BianJiViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BianJiViewController.h; sourceTree = "<group>"; };
 		1F4F63631C2A8BE400EB1CD1 /* BianJiViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BianJiViewController.m; sourceTree = "<group>"; };
 		1F4F63641C2A8BE400EB1CD1 /* BianJiViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BianJiViewController.xib; sourceTree = "<group>"; };
@@ -370,6 +378,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1F20DC541CBF7ECC006E04F6 /* BROWER */ = {
+			isa = PBXGroup;
+			children = (
+				1F20DC551CBF7EE4006E04F6 /* BorrowModel.h */,
+				1F20DC561CBF7EE4006E04F6 /* BorrowModel.m */,
+				1F20DC571CBF7EE4006E04F6 /* BorrowView.h */,
+				1F20DC581CBF7EE4006E04F6 /* BorrowView.m */,
+				1F20DC591CBF7EE4006E04F6 /* BorrowView.xib */,
+			);
+			name = BROWER;
+			sourceTree = "<group>";
+		};
 		1F8D557E1CB756AE00D6F704 /* SimpleBarChart */ = {
 			isa = PBXGroup;
 			children = (
@@ -587,6 +607,7 @@
 		4E2D56261AEB6C0F00ABE1BA /* VC */ = {
 			isa = PBXGroup;
 			children = (
+				1F20DC541CBF7ECC006E04F6 /* BROWER */,
 				4E03BC8D1B33BE5000E7CD0B /* News */,
 				4E2082B11B32AD4D00242E99 /* Setting */,
 				4ECD96091B1FEF8D0078C713 /* SuishouJi */,
@@ -1019,6 +1040,7 @@
 				4E082A461B66269200A7C262 /* word@2x.png in Resources */,
 				8421141D1C4258390076C467 /* thinkape.jpg in Resources */,
 				1FCB99DE1C70843D00465CDA /* FanKuiSViewController.xib in Resources */,
+				1F20DC5C1CBF7EE4006E04F6 /* BorrowView.xib in Resources */,
 				4EE56B461AD3C54700D34CDD /* Main.storyboard in Resources */,
 				4ED4493A1AEA32160047614F /* pageDot@2x.png in Resources */,
 				1F6D8D001C3B6FD200496AF1 /* no_image.9.png in Resources */,
@@ -1131,6 +1153,7 @@
 				1FB6E5001C7D53F800D9F641 /* Calculator.m in Sources */,
 				4E83EF371BA279E400FF93B6 /* SendMsgViewController.m in Sources */,
 				4ED537D71B4D02AF00A0FF9F /* NewsDetailViewController.m in Sources */,
+				1F20DC5B1CBF7EE4006E04F6 /* BorrowView.m in Sources */,
 				6A4B6E9A1C07521400663B7E /* ChangePasswordViewController.m in Sources */,
 				4ED4493E1AEA390A0047614F /* WebViewController.m in Sources */,
 				1FA0E46E1CB5F5B1004149F4 /* XYPieChart.m in Sources */,
@@ -1182,6 +1205,7 @@
 				4EE56B401AD3C54700D34CDD /* AppDelegate.m in Sources */,
 				4EEDA57B1B141D9800BAD188 /* AccountModel.m in Sources */,
 				4EE56B3D1AD3C54700D34CDD /* main.m in Sources */,
+				1F20DC5A1CBF7EE4006E04F6 /* BorrowModel.m in Sources */,
 				4E3436D91AEE075F00E45C55 /* StayApprovalViewCell.m in Sources */,
 				4E411E931B01D8D400BE43B0 /* StayDetail.m in Sources */,
 				4EDF2FFF1AF89C220039DAA8 /* BillsDetailViewController.m in Sources */,

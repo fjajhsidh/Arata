@@ -33,11 +33,11 @@
 
 #import "CalculatorViewController.h"
 #import "calculatorView.h"
-
+#import "BorrowView.h"
 #import "AppDelegate.h"
 
 @interface SubmitApproveViewController () <KindsItemsViewDelegate,CTAssetsPickerControllerDelegate,SDPhotoBrowserDelegate,UIScrollViewDelegate,
-QLPreviewControllerDataSource,CalculatorResultDelegate>
+QLPreviewControllerDataSource,CalculatorResultDelegate,BorrowViewDelegate>
 {
     NSString *delteImageID;
     NSString *sspid;
@@ -65,7 +65,6 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
 @property (weak, nonatomic) IBOutlet UIButton *saveBtn;
 @property (weak, nonatomic) IBOutlet UIButton *commintBtn;
 
-
 @property(nonatomic)NSInteger tagValue;
 
 @property(nonatomic,strong)NSMutableDictionary *cell_data;
@@ -78,6 +77,22 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
 @property(nonatomic,assign)BOOL isretern;
 @property(nonatomic,strong)KindsItemsView *kindsItemsView;
 
+@property (nonatomic,strong)BorrowView *borrowView;
+//是否借款冲销：
+@property (nonatomic,assign)BOOL isBorrow;
+@property (nonatomic,copy)NSString *oldPersonUid;//保存旧的承担人id
+
+@property (nonatomic,assign)NSInteger layoutarrayCount;
+
+@property (nonatomic,copy)NSMutableArray *borrowSelectArray;//选择冲销的借款的数组
+@property (nonatomic,copy)NSMutableArray *borrowTotalarray;//冲销的请求的数组
+@property (nonatomic,copy)NSString *borrowSelectMoney;//冲销的选择的金额
+@property (nonatomic,copy)NSString *borrowTotalmoney;//冲销的总共的金额
+
+
+@property(nonatomic,assign)BOOL isediting;//判断草稿页面刚出现时，提前去请求借款单的数据
+@property (nonatomic,copy)NSMutableArray *programeIdArray;//用来保存当_type==1一开始的账单的progarmeID
+
 @end
 
 @implementation SubmitApproveViewController
@@ -87,15 +102,23 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
     if (self) {
         self.type = 0;
         commintBills = NO;
+//        self.isediting = NO;
     }
     return self;
 }
 
+
+
+
 - (void)viewDidLoad {
     [super viewDidLoad];
+    _isBorrow = NO;
+    self.isSubmit = NO;
+    _delaysContentTouches = NO;
     
-    Text_y=0;
-    distances=0;
+    _borrowTotalarray = [[NSMutableArray alloc]init];
+    
+    _programeIdArray = [[NSMutableArray alloc]init];
     
     _searchArray = [[NSMutableArray alloc] init];
     _selectModel = [[KindsModel alloc] init];
@@ -106,12 +129,16 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
     self.tableViewDic = [[NSMutableDictionary alloc] init];
     self.deaftcec = [NSMutableArray array];
     NSLog(@"self.tableViewDic:%@",[self.tableViewDic class]);
+
+    
+    UIButton *backBt = [UIButton buttonWithType:UIButtonTypeCustom];
+    [backBt setTitle:@"草稿" forState:UIControlStateNormal];
+    [backBt setFrame:CGRectMake(80, 10, 60, 44)];
     
     if (self.type == 0) {
-        UIButton *backBt = [UIButton buttonWithType:UIButtonTypeCustom];
-        [backBt setImage:[UIImage imageNamed:@"right_item"] forState:UIControlStateNormal];
-        [backBt setFrame:CGRectMake(80, 10, 44, 44)];
-        // [backBt setImageEdgeInsets:UIEdgeInsetsMake(0, 0, 0, 40)];
+//        UIButton *backBt = [UIButton buttonWithType:UIButtonTypeCustom];
+//        [backBt setTitle:@"草稿" forState:UIControlStateNormal];
+//        [backBt setFrame:CGRectMake(80, 10, 60, 44)];
         [backBt addTarget:self action:@selector(editItem) forControlEvents:UIControlEventTouchUpInside];
         UIBarButtonItem *back = [[UIBarButtonItem alloc] initWithCustomView:backBt];
         self.navigationItem.rightBarButtonItem = back;
@@ -121,46 +148,47 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
             self.kindsPickerView = [[[NSBundle mainBundle] loadNibNamed:@"KindsPickerView" owner:self options:nil] lastObject];
             [self.kindsPickerView setFrame:CGRectMake(0, SCREEN_HEIGHT - 216, SCREEN_WIDTH, 216)];
             __block SubmitApproveViewController *weakSelf = self;
+            
             self.kindsPickerView.selectItemCallBack = ^(KindsModel *model){
                 weakSelf.selectModel = model;
                 //请求“随手报”页面的数据
                 [weakSelf billDetails];
+            
+                if ([weakSelf.selectModel.programid containsString:@"13"]) {
+                    weakSelf.isSubmit = YES;
+                    [backBt setFrame:CGRectMake(80, 10, 70, 44)];
+                    [backBt setTitle:@"借款冲销" forState:UIControlStateNormal];
+                    backBt.titleLabel.font = [UIFont systemFontOfSize:16];
+                }
             };
             [self.view addSubview:self.kindsPickerView];
         }
         
         [self requestBillsType];
         
-    }
-    else{
+    }else{
         [self.commintBtn setTitle:@"提交" forState:UIControlStateNormal];
         [self.saveBtn setTitle:@"保存" forState:UIControlStateNormal];
         self.title = @"编辑草稿";
         [self requestEdithBillsType];
+        
+        if ([self.editModel.ProgramID containsString:@"13"]) {
+            
+            [backBt setFrame:CGRectMake(80, 10, 70, 44)];
+            [backBt setTitle:@"借款冲销" forState:UIControlStateNormal];
+            backBt.titleLabel.font = [UIFont systemFontOfSize:16];
+            [backBt addTarget:self action:@selector(editItem) forControlEvents:UIControlEventTouchUpInside];
+            UIBarButtonItem *back = [[UIBarButtonItem alloc] initWithCustomView:backBt];
+            self.navigationItem.rightBarButtonItem = back;
+
+        }
     }
    
     self.calculatorvc=[[CalculatorViewController alloc]init];
     self.calculatorvc.delegate=self;
-    self.textfield = [[UITextField alloc] init];
-//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardShowsd:) name:UIKeyboardWillShowNotification object:nil];
-//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardHidensd:) name:UIKeyboardWillHideNotification object:nil];
-    
+    self.textfield = [[UITextField alloc] init];    
 }
 
-- (void)keyboardShowsd:(NSNotification *)notification{
-    NSDictionary *keyBoardInfo = [notification userInfo];
-    NSValue *aValue = [keyBoardInfo objectForKey:@"UIKeyboardFrameEndUserInfoKey"];
-    CGRect rect = [aValue CGRectValue];
-    CGFloat keyBoard_Y = rect.origin.y;
-    if (Text_y > keyBoard_Y && Text_y!= 0) {
-        distances =Text_y - keyBoard_Y + 100;
-        self.view.frame = CGRectMake(0, -distances, self.view.frame.size.width, self.view.frame.size.height);
-    }
-}
-- (void)keyboardHidensd:(NSNotification *)notification{
-    Text_y= 0;
-    self.view.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
-}
 /**
  *  初始化详细表单分类界面
  *
@@ -201,9 +229,6 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
     NSLog(@"%@%@",name,ID);
     KindsLayoutModel *layoutModel = [self.layoutArray safeObjectAtIndex:tag];
     
-    
-//     [self str:ID];
-    
     [self.XMLParameterDic setObject:ID forKey:layoutModel.key];
     [self.tableViewDic setObject:name forKey:layoutModel.key];
    
@@ -215,7 +240,32 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
         [self setAuto:layoutModel];
         
     }
+    if (![[self.XMLParameterDic objectForKey:layoutModel.key] isEqualToString:self.oldPersonUid]) {
+        
+        if (self.isBorrow) {
+            
+            [self.layoutArray removeLastObject];
+            [self.tableViewDic removeObjectForKey:@"borrowMoney"];
+        }
+        
+        if (_type == 1){
+        
+            for (KindsLayoutModel  *model in self.layoutArray) {
+            
+                if ([model.Name isEqualToString:@"冲销金额"]) {
 
+                    [self.layoutArray removeObject:model];
+                    [self.tableViewDic removeObjectForKey:@"editBorrowMoney"];
+          
+                    break;
+                }
+            }
+            
+            self.layoutarrayCount = self.layoutArray.count;
+        }
+        
+    }
+    
     [self.tableView reloadData];
     
      //请求数据结束，数据已经铺在textfield上了，拿到这个数据去
@@ -242,6 +292,7 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
         }
         i++;
     }
+    
     [self.XMLParameterDic setObject:idStr forKey:layoutModel.key];
     [self.tableViewDic setObject:nameStr forKey:layoutModel.key];
     
@@ -250,8 +301,6 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
     
     if ([layoutModel.MobileSspEventByAuto isEqualToString:@""]||layoutModel.MobileSspEventByAuto==nil) {
 
-        
-        
     }else {
        [self setAuto:layoutModel];
         
@@ -300,16 +349,17 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
     [RequestCenter GetRequest:[NSString stringWithFormat:@"ac=GetSspGridField_IOS&u=%@&programid=%@&gridmainid=%@",self.uid,_selectModel.programid,_selectModel.gridmainid]
                    parameters:nil
                       success:^(AFHTTPRequestOperation *operation, NSDictionary *responseObject) {
+                          
                           [self.layoutArray removeAllObjects];
+                          
                           NSDictionary *dataDic = [[responseObject objectForKey:@"msg"] objectForKey:@"fieldconf"];
                     
                           KindsLayoutModel *layoutModel = [[KindsLayoutModel alloc] init];
-                         layoutModel.Name = @"类别";
-                         
-                       
+                          layoutModel.Name = @"类别";
                           self.newflag = [dataDic objectForKey:@"new"];
                           self.newflag = self.newflag.length > 0 ? self.newflag : @"yes";
                           [self.layoutArray addObject:layoutModel];
+                          
                           [self saveLayoutKindsToDB:dataDic callbakc:^{
                               [self.tableView reloadData];
                               [SVProgressHUD dismiss];
@@ -329,13 +379,11 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
  *
  */
 
-- (void)kindsDataSource:(KindsLayoutModel *)model{
-    
-    
+- (void)kindsDataSource:(KindsLayoutModel *)model
+{
     NSString *str1 = [NSString stringWithFormat:@"datasource like %@",[NSString stringWithFormat:@"\"%@\"",model.datasource]];
     NSInteger tag= [self.layoutArray indexOfObject:model];
    
-
     if (model.datasource.length != 0) {
         NSString *oldDataVer = [[CoreDataManager shareManager] searchDataVer:str1];
     
@@ -344,8 +392,6 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
          *  首先判断是否为空，空的话 就传空值，不为空替换
          */
         if ([_sqlstr isEqualToString:@""]) {
-            
-        
             if ([oldDataVer isEqualToString:model.DataVer.length >0 ? model.DataVer : @"0.01"] && oldDataVer.length >0) {
             
                 NSString *str = [NSString stringWithFormat:@"datasource like %@ ",[NSString stringWithFormat:@"\"%@\"",model.datasource]];
@@ -354,9 +400,7 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
                     if (arr.count == 0) {
                     
                         [[CoreDataManager shareManager] updateModelForTable:@"KindsLayout" sql:str data:[NSDictionary dictionaryWithObjectsAndKeys:model.DataVer.length >0 ? model.DataVer : @"0.01",@"dataVer", nil]];
-                    
                         [self requestKindsDataSource:model];
-                
                     }else{
                     
                         [SVProgressHUD dismiss];
@@ -386,6 +430,7 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
  *  请求 详细数据分类
  *
  */
+#pragma mark  点击某个框，加载KindsItemsView并请求数据：
 
 - (void)requestKindsDataSource:(KindsLayoutModel *)model{
     //http://localhost:53336/WebUi/ashx/mobilenew.ashx?ac=GetDataSource&u=9& datasource =400102&dataver=1.3
@@ -403,14 +448,13 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
     }
     
     NSInteger tag= [self.layoutArray indexOfObject:model];
-    
     NSString *str0 = [NSString stringWithFormat:@"ac=GetDataSourceNew&u=%@&datasource=%@&dataver=0&q=%@",self.uid,model.datasource,_sqlstr];
-   
     NSString *str1 = [str0 stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     [RequestCenter GetRequest:str1
                    parameters:nil
                       success:^(AFHTTPRequestOperation *operation, NSDictionary *responseObject) {
+                          
                           id dataArr = [responseObject objectForKey:@"msg"];
                           if ([dataArr isKindOfClass:[NSArray class]]) {
                               [self saveItemsToDB:dataArr callbakc:^(NSArray *modelArr) {
@@ -435,7 +479,8 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
 
 
 //递交申请
-- (void)saveBills:(NSString *)ac{
+- (void)saveBills:(NSString *)ac
+{
     //t
     NSString *xmlParameter = [self XMLParameter];
     if (xmlParameter.length == 0) {
@@ -455,7 +500,18 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
         gridmainid = _editModel.GridMainID;
         programid = _editModel.ProgramID;
     }
-    NSString *str = [NSString stringWithFormat:@"%@?ac=%@&u=%@&data=%@&gridmainid=%@&programid=%@&new=%@",Web_Domain,ac1,self.uid,xmlParameter,gridmainid,programid,self.newflag];
+
+    NSString *borrowStr;
+    if (_isBorrow) {
+        borrowStr = [self borrowStr];
+    }
+    if (_type == 1){
+        if ([self.tableViewDic objectForKey:@"editBorrowMoney"]) {
+            borrowStr = [self borrowStr];
+        }
+    }
+
+    NSString *str = [NSString stringWithFormat:@"%@?ac=%@&u=%@&data=%@&gridmainid=%@&programid=%@&new=%@&ImportMsg=%@",Web_Domain,ac1,self.uid,xmlParameter,gridmainid,programid,self.newflag,borrowStr];
     NSLog(@"str : %@",str);
     
     if ([self.newflag isEqualToString:@"no"]) {
@@ -514,6 +570,90 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
     }];
     
 }
+
+- (NSString *)borrowStr
+{
+    //取出“冲销金额”的数据
+    NSInteger money = [[self.tableViewDic objectForKey:@"borrowMoney"] integerValue];
+    if (_type == 1) {
+        money = [[self.tableViewDic objectForKey:@"editBorrowMoney"] integerValue];
+    }
+    
+    if (money == [self.borrowSelectMoney integerValue]) {
+        NSString *str0 = [NSString string];
+        for (BorrowModel *model in self.borrowSelectArray) {
+            str0 = [str0 stringByAppendingFormat:@"%@|%@{$}",model.billid,model.totalmoney_show_id];
+        }
+        
+        str0 = [str0 substringWithRange:NSMakeRange(0 ,str0.length-3)];
+        return str0;
+    }else if (money < [self.borrowSelectMoney integerValue])
+    {
+        NSString *str0 = [NSString string];
+//         NSInteger everMoney = money;
+//        everMoney = everMoney - [model.totalmoney_show_id integerValue];
+ 
+        NSInteger lastmoney = 0;
+        NSInteger everMoney = money;
+        lastmoney = everMoney;
+        for (BorrowModel *model in self.borrowSelectArray) {
+//            NSInteger everMoney = money;
+//            lastmoney = everMoney;
+            everMoney = everMoney - [model.totalmoney_show_id integerValue];
+//            BorrowModel *model0 = [self.borrowSelectMoney[i]]
+            
+            if (everMoney <= 0) {
+                str0 = [str0 stringByAppendingFormat:@"%@|%@{$}",model.billid,[NSString stringWithFormat:@"%ld", lastmoney ]];
+                
+                str0 = [str0 substringWithRange:NSMakeRange(0 ,str0.length-3)];
+                return str0;
+            }else{
+                str0 = [str0 stringByAppendingFormat:@"%@|%@{$}",model.billid,model.totalmoney_show_id];
+                lastmoney = everMoney ;
+                
+            }
+            
+        }
+        
+    }else{
+        NSString *str0 = [NSString string];
+        for (BorrowModel *model in self.borrowSelectArray) {
+            str0 = [str0 stringByAppendingFormat:@"%@|%@{$}",model.billid,model.totalmoney_show_id];
+            for (BorrowModel *model0 in _borrowTotalarray) {
+                if ([model0.billid isEqualToString:model.billid]) {
+                    [_borrowTotalarray removeObject:model0];
+                   
+                    break;
+                }
+            }
+//            [self.borrowTotalarray removeObject:model];
+        }
+        
+        NSInteger everMoney = 0;
+        everMoney = money - [_borrowSelectMoney integerValue];
+        NSInteger lastMoney = 0;
+        lastMoney = everMoney;
+        for (BorrowModel * model in _borrowTotalarray) {
+            
+            everMoney = everMoney - [model.totalmoney_show_id integerValue];
+            if (everMoney > 0){
+                str0 = [str0 stringByAppendingFormat:@"%@|%@{$}",model.billid,model.totalmoney_show_id];
+                
+                lastMoney = everMoney;
+                
+            }else{
+//                everMoney = [model.totalmoney_show_id integerValue] - everMoney;
+//                str0 = [str0 stringByAppendingFormat:@"%@|%@{$}",model.billid,[NSString stringWithFormat:@"%ld",[model.totalmoney_show_id integerValue] + everMoney]];
+                str0 = [str0 stringByAppendingFormat:@"%@|%@{$}",model.billid,[NSString stringWithFormat:@"%ld",lastMoney]];
+            
+                str0 = [str0 substringWithRange:NSMakeRange(0 ,str0.length-3)];
+                return str0;
+            }
+        }
+    }
+    return nil;
+}
+
 
 - (void)uploadImage:(NSString *)theSspid ac:(NSString *)ac inde:(NSInteger)index{
     
@@ -584,30 +724,112 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
                           layoutModel.Name = @"类别";
                           layoutModel.key = @"cagegory_c";
                           [self.layoutArray addObject:layoutModel];
+                        
                           [self.tableViewDic setObject:_editModel.cname forKey:layoutModel.key];
                           
+                          /**
+                           *  如果有借款冲销的话
+                           */
+                          NSString *moneyStr = [[responseObject objectForKey:@"msg"] objectForKey:@"importbills"];
+                          
+                          if (![moneyStr isEqualToString:@""] ) {
+                              
+                              KindsLayoutModel *model = [[KindsLayoutModel alloc]init];
+                              
+                              model.Name = @"冲销金额";
+                      
+                              [self.layoutArray addObject:model];
+                              
+                              model.key = @"editBorrowMoney";
+                               NSString *importbillsTotalMoney = [self importbillsTotalMoney:moneyStr];
+                              [self.tableViewDic setObject:importbillsTotalMoney forKey:model.key];
+    
+                          }
+                          //
+                          //请求数据成功之后，保存到DB成功之后的回调：
+
+                          //可不可以在回调里面去请求数据
                           
                           [self saveLayoutKindsToDB:dataDic callbakc:^{
+                              
                               [self.tableView reloadData];
                               [SVProgressHUD dismiss];
                               
+
+                              if ([self.tableViewDic objectForKey:@"editBorrowMoney"]) {
+                                  for (KindsLayoutModel * model in self.layoutArray) {
+                                      if ([model.Name isEqualToString:@"承担人"]) {
+                                          NSString *personUid = [self.XMLParameterDic objectForKey:model.key];
+                                          self.oldPersonUid = personUid;
+                                          
+                                          [self requestBorrowDataSource:personUid];
+                                          [SVProgressHUD showWithStatus:@"请稍后" maskType:2];
+                                      }
+                                  }
+                                  
+                              }
                           }];
                       }
                       failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                         
+                          [SVProgressHUD showErrorWithStatus:@"请求数据失败，请检查网络"];
                           
                       }
             showLoadingStatus:YES];
 }
 
-// 编辑时  草稿 存为单据
-- (void)saveCGToBill:(NSString *)AG{
+
+#pragma mark   请求编辑草稿数据时，如果有冲销金额，要对冲销金额进行拆分并且展示在列表上
+
+- (NSString *)importbillsTotalMoney:(NSString *)moneyStr
+{
     
+    NSArray *rootArray = [moneyStr componentsSeparatedByString:@","];
+    NSMutableArray *lastArray = [[NSMutableArray alloc]init];
+    for (NSString *itemStr in rootArray) {
+        NSArray *itemArray = [itemStr componentsSeparatedByString:@":"];
+        [lastArray addObject:itemArray];
+    }
+    NSInteger totalMoney = 0;
+    for (int i = 0; i<lastArray.count; i++) {
+        NSInteger money = [lastArray[i][2] integerValue];
+        NSString *programeId = lastArray[i][1];
+        [_programeIdArray addObject:programeId];
+        
+        totalMoney +=money;
     
+    }
+
+    return [NSString stringWithFormat:@"%ld",totalMoney];
     
+}
+
+// 编辑时 草稿 存为单据
+
+- (void)saveCGToBill:(NSString *)AG
+{
     //http://27.115.23.126:3032/ashx/mobilenew.ashx?ac= SspCGToBills &u=9& sspid =3,4,5,6,7
-    NSString *billsspid = commintBills ? sspid : _editModel.SspID;
-    NSString *url = [NSString stringWithFormat:@"ac=SspCGToBills&u=%@&sspid=%@",self.uid,billsspid];
     
+//    [self checkoutEmpty];
+    
+    if (_type == 1) {
+        [self saveBills:@"SaveCG"];
+    }
+    
+    
+    NSString *billsspid = commintBills ? sspid : _editModel.SspID;
+    
+    NSString *borrowStr;
+    if (_type == 1) {
+        if ([self.tableViewDic objectForKey:@"editBorrowMoney"]) {
+            
+            borrowStr = [self borrowStr];
+        }
+        
+    }
+
+    NSString *url = [NSString stringWithFormat:@"ac=SspCGToBills&u=%@&sspid=%@&ImportMsg=%@",self.uid,billsspid,borrowStr];
+    url = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
 //    NSString *str1 = @"http://27.115.23.126:5032/ashx/mobileNew.ashx?ac=GetDataSourceNew&u=1&datasource=410202&dataver=0&q=and cDepName like '%财%'";
     
@@ -630,6 +852,33 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
                       }
             showLoadingStatus:YES];
 }
+
+//
+//- (void)checkoutEmpty
+//{
+//    int i = 0;
+//    for (KindsLayoutModel *layoutModel in self.layoutArray) {
+//        // NSString *value = [self.XMLParameterDic objectForKey:layoutModel.key];
+//        //
+//        NSString *value = [self.XMLParameterDic objectForKey:layoutModel.key];
+//        
+//        if (layoutModel.IsMust==1 && value.length == 0&&i !=0) {
+//            [SVProgressHUD showErrorWithStatus:[NSString stringWithFormat:@"%@不能为空",layoutModel.Name]];
+//            
+//        }
+//          i++;
+//    }
+//  
+//
+//  
+//}
+
+
+
+
+
+
+
 
 #pragma mark - SQL DB Action
 
@@ -679,6 +928,7 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
                 }
             }
         }
+        self.layoutarrayCount = self.layoutArray.count ;
         dispatch_async(dispatch_get_main_queue(), ^{
             callBack();
         });
@@ -706,13 +956,229 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
     
 }
 
-#pragma mark - BtnAction
-
-- (void)editItem{
-    YPCGViewController *ypVC = [self.storyboard instantiateViewControllerWithIdentifier:@"YPCGVC"];
-    [self.navigationController pushViewController:ypVC animated:YES];
+#pragma mark - BtnAction单击右边切换到草稿编辑,借款冲销的UI创建
+//
+- (void)editItem
+{
+    self.isediting = YES;
+    
+    if (_type == 0){
+        
+        if (_isSubmit == YES){
+            NSLog(@"%@",_selectModel.programid);
+//            KindsLayoutModel *model;
+            
+            for (KindsLayoutModel * model in _layoutArray) {
+                if ([model.Name isEqualToString:@"承担人"]) {
+                    NSString *personUid = [self.XMLParameterDic objectForKey:model.key];
+                    self.oldPersonUid = personUid;
+                    if (personUid) {
+                        [self requestBorrowDataSource:personUid];
+                        [SVProgressHUD showWithStatus:@"加载中，请稍后" maskType:2];
+                        
+                    }else{
+                        [SVProgressHUD showErrorWithStatus:@"请选择承担人"];
+                    }
+                    
+                }
+            }
+            
+//            KindsLayoutModel *model = _layoutArray[2];
+            
+        }else{
+            YPCGViewController *ypVC = [self.storyboard instantiateViewControllerWithIdentifier:@"YPCGVC"];
+            [self.navigationController pushViewController:ypVC animated:YES];
+        }
+    }else{//当_type == 1 的时候
+        
+        
+        
+        for (KindsLayoutModel * model in _layoutArray) {
+            if ([model.Name isEqualToString:@"承担人"]) {
+                NSString *personUid = [self.XMLParameterDic objectForKey:model.key];
+                self.oldPersonUid = personUid;
+                if (personUid) {
+                    [self requestBorrowDataSource:personUid];
+                    [SVProgressHUD showWithStatus:@"加载中，请稍后" maskType:2];
+                    
+                }else{
+                    [SVProgressHUD showErrorWithStatus:@"请选择承担人"];
+                }
+                
+            }
+        }
+        
+    }
+    
 }
 
+//单击借款冲销
+-(void)requestBorrowDataSource:(NSString *)personUid
+{
+    //http://27.115.23.126:5032/ashx/mobilenew.ashx?ac= ImportBills&u=1&uid=1&skisbyloginuser=0&sourceprogramid=120102&targetprogramid=130102&pi=1&ps=50
+    
+    [self.datePickerView removeFromSuperview];
+    [self.calculatorvc.view removeFromSuperview];
+    [self.kindsItemsView removeFromSuperview];
+    
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    NSString *skisbyloginuser = [userDefaults objectForKey:@"skisbyloginuser"];
+    NSString *ski = [userDefaults objectForKey:@"user"];
+    NSString *modelProgramId ;
+    
+    if (_type == 0) {
+        
+        modelProgramId = _selectModel.programid;
+        
+    }else{
+        modelProgramId = self.editModel.ProgramID;
+    }
+
+    NSString *str0 =[NSString stringWithFormat:@"ac=ImportBills&u=%@&uid=%@&skisbyloginuser=%@&sourceprogramid=120102&targetprogramid=%@&pi=0&ps=50",self.uid,personUid,skisbyloginuser,modelProgramId];
+    
+    NSString *urlStr = [str0 stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+    [RequestCenter GetRequest:urlStr parameters:nil success:^(AFHTTPRequestOperation *operation, NSDictionary *responseObject) {
+        
+        NSDictionary *msgDic = [responseObject objectForKey:@"msg"];
+        NSArray *rootArray = [msgDic objectForKey:@"data"];
+        
+        if ([rootArray isKindOfClass:[NSArray class]]) {
+            //       for (NSDictionary *dic in arr) {
+//            KindsItemModel *itemModel = [KindsItemModel objectWithKeyValues:dic];
+            NSMutableArray *modelArr = [[NSMutableArray alloc]init];
+            for (NSDictionary *dict  in rootArray) {
+                BorrowModel *borrowModel = [BorrowModel objectWithKeyValues:dict];
+                [modelArr addObject:borrowModel];
+            }
+            [self initBorrowView:modelArr];
+            [SVProgressHUD dismiss];
+        }else{
+            [SVProgressHUD showErrorWithStatus:@"请求数据失败"];
+            [SVProgressHUD dismiss];
+            
+        }
+    
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        [SVProgressHUD dismiss];
+    }];
+    
+}
+
+
+
+
+
+- (void)initBorrowView:(NSArray *)rootArray
+{
+    
+    self.borrowView= [[[NSBundle mainBundle] loadNibNamed:@"BorrowView" owner:self options:nil] lastObject];
+    self.borrowView.frame = CGRectMake(50, 100, SCREEN_WIDTH - 20, SCREEN_WIDTH - 20);
+    self.borrowView.center = CGPointMake(SCREEN_WIDTH / 2.0, SCREEN_HEIGHT / 2.0);
+    self.borrowView.delegate = self;
+    self.borrowView.transform =CGAffineTransformMakeTranslation(0, -SCREEN_HEIGHT / 2.0 - CGRectGetHeight(self.kindsItemsView.frame) / 2.0f);
+    self.borrowView.dataArray = rootArray;
+    _borrowTotalarray = rootArray;
+
+    NSInteger totalmoney = 0;
+    for (int i = 0; i<rootArray.count; i++) {
+        BorrowModel *model = rootArray[i];
+    
+        NSInteger money = [model.totalmoney_show_id integerValue];
+        totalmoney += money;
+    }
+    self.borrowTotalmoney = [NSString stringWithFormat:@"%ld",totalmoney];
+    if (self.isediting) {
+        [self.view addSubview:self.borrowView];
+    }
+    for (BorrowModel *model in self.borrowTotalarray) {
+        
+        for (NSString *programeId in _programeIdArray) {
+            if ([model.billid isEqualToString:programeId]) {
+                _borrowSelectArray = [[NSMutableArray alloc]init];
+                [_borrowSelectArray addObject:model];
+            }
+        }
+    }
+    
+    NSInteger money0 = 0;
+    for (BorrowModel *model in _borrowSelectArray) {
+        
+        NSInteger money = [model.totalmoney_show_id integerValue];
+        money0 += money;
+    }
+    
+    _borrowSelectMoney = [NSString stringWithFormat:@"%ld",money0];
+    
+    [UIView animateWithDuration:1.0
+                          delay:0
+         usingSpringWithDamping:0.5
+          initialSpringVelocity:0.6
+                        options:UIViewAnimationOptionLayoutSubviews
+                     animations:^{
+                         self.borrowView.transform = CGAffineTransformMakeTranslation(0, 0);
+                     }
+                     completion:^(BOOL finished) {
+                         
+                     }];
+    [self.datePickerView removeFromSuperview];
+    [self.calculatorvc.view removeFromSuperview];
+    
+}
+
+#pragma mark   BorrowViewDelegate
+//
+- (void)selectBorrowArray:(NSArray *)array view:(BorrowView *)view
+{
+    self.borrowSelectArray = [[NSMutableArray alloc]initWithArray:array];
+    
+    NSInteger money0 = 0;
+    
+    for (int i = 0; i<array.count; i++) {
+        BorrowModel *model = array[i];
+        NSInteger money = [model.totalmoney_show_id integerValue];
+        money0 += money;
+
+    }
+    
+    NSLog( @"%ld",money0);
+    
+    KindsLayoutModel *model = [[KindsLayoutModel alloc]init];
+    model.Name = @"冲销金额";
+    if (_type == 0) {
+        self.isBorrow = YES;
+        if (self.layoutArray.count > self.layoutarrayCount ) {
+        
+        }
+        else{
+            [self.layoutArray addObject:model];
+            
+        }
+        model.key = @"borrowMoney";
+        
+        [self.tableViewDic setObject:[NSString stringWithFormat:@"%ld",money0] forKey:model.key];
+
+    }else if (_type == 1){
+
+        if ([self.tableViewDic objectForKey:@"editBorrowMoney"]){
+            
+        }else{
+            [self.layoutArray addObject:model];
+        }
+    
+        model.key = @"editBorrowMoney";
+        [self.tableViewDic setObject:[NSString stringWithFormat:@"%ld",money0] forKey:@"editBorrowMoney"];
+        
+    }
+
+    self.borrowSelectMoney = [NSString stringWithFormat:@"%ld",money0];
+    
+    [self.tableView reloadData];
+    
+}
+
+
+#pragma mark    随手记：存为草稿，递交申请；草稿：保存，提交
 /**
  *  存为草稿
  *
@@ -737,18 +1203,20 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
  *  递交申请
  *
  */
-- (IBAction)commitApprove:(UIButton *)sender {
+- (IBAction)commitApprove:(UIButton *)sender
+{
     if (self.type == 0) {
         commintBills = YES;
         [self saveBills:@"SaveCG"];
-    }
-    else
-    {
+        
+    }else{
         [self saveCGToBill:sspid];
     }
+    
 }
 
-- (void)showPickImageVC{
+- (void)showPickImageVC
+{
     if (!_imagesArray) {
         _imagesArray = [[NSMutableArray alloc] initWithCapacity:0];
     }
@@ -927,12 +1395,10 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
         [weakSelf.datePickerView closeView:nil];
         
         if ([layoutModel.MobileSspEventByAuto isEqualToString:@""]||layoutModel.MobileSspEventByAuto==nil) {
-
     
         }else {
         
             [weakSelf setAuto:layoutModel];
-    
         }
         
         [weakSelf.tableView reloadData];
@@ -955,7 +1421,7 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
     return _encodedImageStr;
 }
 
-//判断输入值是否为空
+//判断输入值是否为空,判断冲销金额相关
 - (NSString *)XMLParameter
 {
     NSMutableString *xmlStr = [NSMutableString string];
@@ -978,7 +1444,28 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
                 [xmlStr appendFormat:@"%@=\"%@\"",layoutModel.key,value];
             }
         }
-    
+        
+        //冲销金额是否符合要求
+        
+        if (self.isBorrow || _type == 1) {
+          
+            NSString *money = [self.tableViewDic objectForKey:@"borrowMoney"];
+            if (self.isBorrow) {
+                money = [self.tableViewDic objectForKey:@"borrowMoney"];
+            }else if (_type == 1){
+                money = [self.tableViewDic objectForKey:@"editBorrowMoney"];
+            }
+            
+            NSString *billmoney = [self.tableViewDic objectForKey:@"billmoney"];
+            if (billmoney && [money integerValue] > [billmoney integerValue]) {
+                [SVProgressHUD showErrorWithStatus:[NSString stringWithFormat:@"冲销金额不能大于报销金额"]];
+                return nil;
+            }
+            if ([money integerValue] > [self.borrowTotalmoney integerValue]) {
+                [SVProgressHUD showErrorWithStatus:@"冲销金额不能大于借款金额"];
+                return nil;
+            }
+        }
         i++;
     }
     NSString *returnStr = [NSString stringWithFormat:@"<data %@></data>",xmlStr];
@@ -1081,10 +1568,8 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
     [self.XMLParameterDic setObject:textField.text forKey:layoutModel.key];
     [self.tableViewDic setObject:textField.text forKey:layoutModel.key];
    
-
     return YES;
 }
-
 
 #pragma mark -- 执行计算器单击确认的操作
 
@@ -1132,13 +1617,10 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
 
 - (void)hideCalculatorScreenText
 {
-    
     if (self.calculatorvc.view) {
         
         [self.calculatorvc.view removeFromSuperview];
     }
-    
-    
 }
 
 
@@ -1168,12 +1650,23 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    if(_type == 0){
+        
+        [self setdefaults];
+    }
+
 
     if (indexPath.row != self.layoutArray.count) {
         
         KindsLayoutModel *layoutModel = [self.layoutArray safeObjectAtIndex:indexPath.row];
+        layoutModel.index = indexPath.row;
+        layoutModel.indexPath = indexPath;
+        NSLog(@"hshhahshshshshshshsh-------------%ld",layoutModel.index);
+        
+        
         static NSString *cellID = @"cell";
         BillsLayoutViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellID];
+        
         cell.contentText.placeholder = @"";
         
         if (cell == nil) {
@@ -1185,6 +1678,7 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
        
         cell.contentText.tag = indexPath.row;
 
+        
         if(indexPath.row == 0){
             
         }else{
@@ -1193,11 +1687,15 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
            
         }
        
+        
+        
         NSString *value = [self.tableViewDic objectForKey:layoutModel.key];
+        
         value = value.length >0 ? value :@"";
         NSLog(@"值%@",value);
         cell.contentText.text = value;
         cell.contentText.enabled = YES;
+        
         if (indexPath.row == 0 && self.type == 0) {
             cell.contentText.text = _selectModel.cname;
             cell.contentText.enabled = NO;
@@ -1209,9 +1707,12 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
             if (layoutModel.IsMust == 1) {
                 cell.contentText.placeholder = @"请输入，不能为空";
             }
-           
+            if ([layoutModel.SqlDataType isEqualToString:@"number"]) {
+//                cell.contentText.keyboardType =UIKeyboardTypeDecimalPad ;
+            }
         }
-    
+        
+
         return cell;
         
     } else {
@@ -1279,43 +1780,34 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
         [addImage setImage:[UIImage imageNamed:@"addImage"] forState:UIControlStateNormal];
         [addImage addTarget:self action:@selector(showPickImageVC) forControlEvents:UIControlEventTouchUpInside];
         [cell.contentView addSubview:addImage];
-//        [self Message];
-       
-        [self performSelector:@selector(setdefaults) withObject:nil afterDelay:0.1];
-//        [self performSelector:@selector(setAuto) withObject:nil afterDelay:0.5];
+
+        
         return cell;
-       
     }
 }
 
-
 #define mark -- scrollViewDelegate
-- (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset
+
+-(void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
-//    [self performSelector:@selector(setdefaults) withObject:nil afterDelay:0.1];
-//    [self.tableView reloadData];
-    
+    [self.tableView reloadData];
 }
 
 -(void)setdefaults
 {
-   
    if (self.isretern==NO) {
-    
        for (KindsLayoutModel *layout in self.layoutArray) {
-           if ([layout.MobileSspDefaultValue isEqualToString:@""]||layout.MobileSspDefaultValue==nil) {
-             
-           }else {
+           if ([layout.MobileSspDefaultValue isEqualToString:@""]||layout.MobileSspDefaultValue==nil || !layout.MobileSspDefaultValue) {
+    
+           }else{
             
 //               NSString *MobileSspEventByAuto = layout.MobileSspEventByAuto;
-               
-               
 //               NSString *mobileStr = [self str:MobileSspEventByAuto];
                
                NSString *mober = layout.MobileSspDefaultValue;
                NSString *aler =[self str:mober];
             //            @synchronized(self) {
-               NSString *defaults = [NSString stringWithFormat:@"%@?ac=MobileDefaultValue&u=%@&fieldname=%@&strsql=%@", Web_Domain,self.uid,layout.Field,aler];
+               NSString *defaults = [NSString stringWithFormat:@"%@?ac=MobileDefaultValue&u=%@&fieldname=%@&strsql=%@",Web_Domain,self.uid,layout.Field,aler];
         
                NSLog(@"默认值的接口=%@",defaults);
                AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
@@ -1343,57 +1835,59 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
                            
                                self.messageid = [f_id objectAtIndex:1];
                                NSLog(@"msg分割=%@",[array objectAtIndex:i] );
+                        
+                               if (layout.MobileSspDefaultValue) {
+                             
+//                                   self.textfield.tag = layout.index;
+                                   
+                                   BillsLayoutViewCell *cell = [self.tableView cellForRowAtIndexPath:layout.indexPath];
+                     
+              
+//                                   BillsLayoutViewCell *cell
+                                   cell.contentText.text = self.namestr;
+                         
+//                                   UITextField *field = [self.textfield viewWithTag:layout.index];
+                                
+                                   cell.contentText = [self.cell_data objectForKey:field];
+//                                   field.text = self.namestr;
+                                   
+                               }
                                
                                self.textfield = [self.cell_data objectForKey:field];
                               
                                self.textfield.text =self.namestr;
                             
+//                               self.textfield = [self.cell_data objectForKey:field];
+//                               self.textfield.text = self.namestr;
+                               
                                [self.XMLParameterDic setObject:self.messageid forKey:field];
                            
                                [self.tableViewDic setObject:self.namestr forKey:field];
                                
-
                            }else{
                         
                            }
-                           
-                       }
-                       
-                   }
 
+                       }
+                   }
                }failure:^(AFHTTPRequestOperation *operation, NSError *error) {
                 
                    [SVProgressHUD dismiss];
            
                }];
-           
+               
                [op setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
                
                    NSLog(@"totle %lld",totalBytesWritten);
-           
                }];
-       
            }
-    
-           NSLog(@"请求成功");
+           NSLog(@"设置默认值请求数据成功");
         //[__lock unlock];
-    
        }
+       
    }
 
 }
-
-
--(void)tableView:(UITableView *)tableView willDisplayCell:(nonnull UITableViewCell *)cell forRowAtIndexPath:(nonnull NSIndexPath *)indexPath
-{
-    NSLog(@"hah ");
-    [self setdefaults];
-    
-//    [self setAuto];
-//    [self.tableView reloadData];
-}
-
-
 
 //替换大括号字符串 包括#
 -(NSString *)str:(NSString *)mobel
@@ -1469,11 +1963,6 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
         cuid = @"";
     }
     
-    
-    
-    
-    
-   
     if ([mobel containsString:@"{"]) {
         
         NSRange r = [mobel rangeOfString:@"{"];
@@ -1512,8 +2001,6 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
     mobel = [mobel stringByReplacingOccurrencesOfString:@"#crolename" withString:crolename];
     mobel = [mobel stringByReplacingOccurrencesOfString:@"#cusercode" withString:cusercode];
     mobel = [mobel stringByReplacingOccurrencesOfString:@"#cusername" withString:cusername];
-    
-    
     mobel = [mobel stringByReplacingOccurrencesOfString:@"#uid" withString:cuid];
     
     return mobel;
@@ -1540,12 +2027,8 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
         
         int end = b.location;
         NSString *field = [Idept substringWithRange:NSMakeRange(start, end-start+1)];
-//        AppDelegate *sdw = [UIApplication sharedApplication].delegate;
-//        NSString *sa= sdw.idept;
         Idept =[Idept stringByReplacingOccurrencesOfString:field withString:@"2"];
         NSLog(@"idept = %@",Idept);
-        
-        
     }
     return Idept;
 }
@@ -1585,8 +2068,6 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
     
 }
 
-
-
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
@@ -1611,7 +2092,7 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
 //#if 0
 
     NSString *mobileStr = [self str:layout.MobileSspEventByAuto];
-    NSString * autoStr = [NSString stringWithFormat:@"http://27.115.23.126:5032/ashx/mobilenew.ashx?ac=MobileEventByAuto&u=%@&strsql=%@",self.uid,mobileStr];
+    NSString * autoStr = [NSString stringWithFormat:@"%@?ac=MobileEventByAuto&u=%@&strsql=%@",Web_Domain,self.uid,mobileStr];
     
     NSLog(@"默认值的接口=%@",autoStr);
     
@@ -1637,8 +2118,9 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
                     NSLog(@"msg分割=%@",[array objectAtIndex:i] );
                     
                     self.textfield = [self.cell_data objectForKey:field];
+                
                     self.textfield.text = self.namestr;
-                    
+        
                     //存的弹窗的对应的id值
                     
                     [self.XMLParameterDic setObject:self.messageid forKey:field];
@@ -1662,11 +2144,33 @@ QLPreviewControllerDataSource,CalculatorResultDelegate>
     }];
     
 //# endif
-
-    
 }
 
+-(void)Goback
+{
+    if (_type == 0) {
+        [self.navigationController popViewControllerAnimated:YES];
+        
+        
+    }else{
+        
+        //http://27.115.23.126:5032/ashx/mobilenew.ashx?ac= SspCGBack &u=9& sspid =3
+        
+        NSString *str = [NSString stringWithFormat:@"ac=SspCGBack&u=%@&sspid=%@",self.uid,self.editModel.SspID];
+        [RequestCenter GetRequest:str parameters:nil success:^(AFHTTPRequestOperation *operation, NSDictionary *responseObject) {
+      
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            
+        }];
+        
+        [self.navigationController popViewControllerAnimated:YES];
+    }
+}
+
+
 @end
+
+
 
 
 

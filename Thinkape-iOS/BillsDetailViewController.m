@@ -659,7 +659,7 @@
                     
                     footerView.hidden = YES;
                     if (self.billType==0) {
-                        lastConstant = 50;
+//                        lastConstant = 50;
                          self.tableViewBottomConstraint.constant = lastConstant;
                     }
                     if (self.billType == 1) {
@@ -684,7 +684,7 @@
                         [self requestHistory];
                     }
                     footerView.hidden = YES;
-                    self.tableViewBottomConstraint.constant = 0;
+                    self.tableViewBottomConstraint.constant =135;
                 }
                 else if (sender.tag==12)
                 {

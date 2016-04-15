@@ -165,7 +165,7 @@
         [SVProgressHUD showInfoWithStatus:@"请输入密码"];
     }
     else{
-        [RequestCenter GetRequest:[NSString stringWithFormat:@"ac=Login&u=%@&pwd=%@",_userText.text,_passwordText.text]
+        [RequestCenter GetRequest:[NSString stringWithFormat:@"ac=Login&u=%@&pwd=%@",[_userText.text stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding],_passwordText.text]
                        parameters:nil
                           success:^(AFHTTPRequestOperation *operation, NSDictionary *responseObject) {
                               NSDictionary *msgDic = [responseObject objectForKey:@"msg"];
