@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="Bianjiviewtableview">
+            <connections>
+                <outlet property="tableview" destination="NOp-Bv-1TQ" id="sTE-mA-4dd"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aC5-pa-509">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                    <subviews>
+                        <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="NOp-Bv-1TQ">
+                            <rect key="frame" x="0.0" y="0.0" width="375" height="412"/>
+                            <color key="backgroundColor" red="0.90196078430000004" green="0.90196078430000004" blue="0.90196078430000004" alpha="1" colorSpace="calibratedRGB"/>
+                            <connections>
+                                <outlet property="dataSource" destination="-1" id="t20-Yv-ewe"/>
+                                <outlet property="delegate" destination="-1" id="zo1-Jg-OT2"/>
+                            </connections>
+                        </tableView>
+                    </subviews>
+                    <color key="backgroundColor" red="0.90196078430000004" green="0.90196078430000004" blue="0.90196078430000004" alpha="1" colorSpace="calibratedRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="trailing" secondItem="NOp-Bv-1TQ" secondAttribute="trailing" id="1wP-td-UzI"/>
+                        <constraint firstItem="NOp-Bv-1TQ" firstAttribute="top" secondItem="aC5-pa-509" secondAttribute="top" id="5ty-nL-59r"/>
+                        <constraint firstItem="NOp-Bv-1TQ" firstAttribute="leading" secondItem="aC5-pa-509" secondAttribute="leading" id="L2W-Z5-bkZ"/>
+                        <constraint firstAttribute="bottom" secondItem="NOp-Bv-1TQ" secondAttribute="bottom" constant="255" id="ZXV-HW-Mgc"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <color key="backgroundColor" red="0.90196078430000004" green="0.90196078430000004" blue="0.90196078430000004" alpha="1" colorSpace="calibratedRGB"/>
+            <constraints>
+                <constraint firstItem="aC5-pa-509" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="Mdc-9Y-agO"/>
+                <constraint firstItem="aC5-pa-509" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="PWq-5M-OCR"/>
+                <constraint firstAttribute="trailing" secondItem="aC5-pa-509" secondAttribute="trailing" id="R6P-qG-pTg"/>
+                <constraint firstAttribute="trailing" secondItem="aC5-pa-509" secondAttribute="trailing" id="eGE-fd-Adg"/>
+                <constraint firstItem="aC5-pa-509" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="jg6-tN-nvx"/>
+                <constraint firstAttribute="bottom" secondItem="aC5-pa-509" secondAttribute="bottom" id="vNv-HE-Dod"/>
+                <constraint firstAttribute="bottom" secondItem="aC5-pa-509" secondAttribute="bottom" id="y02-mh-p5C"/>
+                <constraint firstItem="aC5-pa-509" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="zJw-Mc-mYJ"/>
+            </constraints>
+            <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
+            <point key="canvasLocation" x="385.5" y="5.5"/>
+        </view>
+    </objects>
+</document>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "__42-[SubmitApproveViewController setdefaults]_block_invoke:SubmitApproveViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "__42-[SubmitApproveViewController setdefaults]_block_invoke_2:SubmitApproveViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[ShenPI tableView:cellForRowAtIndexPath:]:ShenPI.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "[mainDataDic objectForKey:model.fieldname]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[SubmitApproveViewController setdefaults]:SubmitApproveViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[MixiViewController textFieldShouldBeginEditing:]:MixiViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "textField.tag">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[SubmitApproveViewController tableView:cellForRowAtIndexPath:]:SubmitApproveViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "indexPath.row">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[MixiViewController tableView:numberOfRowsInSection:]:MixiViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "costatrraylost">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[BianJiViewController addDatePickerView:date:]:BianJiViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "__64-[AFHTTPRequestOperation setCompletionBlockWithSuccess:failure:]_block_invoke49:AFHTTPRequestOperation.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[MixiViewController tableView:cellForRowAtIndexPath:]:MixiViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[BianJiViewController tableView:cellForRowAtIndexPath:]:BianJiViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "cell.textfield.tag">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[MixiViewController sender:]:MixiViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.textfield.tag">
+            </PersistentString>
+            <PersistentString
+               value = "textField.text">
+            </PersistentString>
+            <PersistentString
+               value = "(UITextField *)[self.view viewWithTag:0].text">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "__47-[BianJiViewController addDatePickerView:date:]_block_invoke:BianJiViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[BianJiViewController xmlser]:BianJiViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "[mixi.datasource containsString:@&quot;9999&quot;]">
+            </PersistentString>
+            <PersistentString
+               value = "fielname.length">
+            </PersistentString>
+            <PersistentString
+               value = "dict objectForKey:@&quot;billmoney&quot;">
+            </PersistentString>
+            <PersistentString
+               value = "[mixi.datasource isEqualToString:@&quot;0&quot;]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>
